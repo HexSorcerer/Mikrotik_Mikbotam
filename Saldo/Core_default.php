@@ -45,8 +45,8 @@ $mkbot->cmd('/start|/Start', function () {
             'parse_mode' => 'html',
             'reply_markup' => json_encode([
                 'inline_keyboard' => [
-                    [['text' => '📝 Daftar Sekarang', 'callback_data' => 'daftar']],
-                    [['text' => '❓ Informasi Layanan', 'callback_data' => 'info_layanan']],
+                    [['text' => '📝 Daftar Sekarang', 'request_command' => '/daftar']],
+                    [['text' => '❓ Informasi Layanan', 'request_command' => '/menu']],
                 ],
             ]),
         ];
@@ -59,10 +59,10 @@ $mkbot->cmd('/start|/Start', function () {
             'parse_mode' => 'html',
             'reply_markup' => json_encode([
                 'inline_keyboard' => [
-                    [['text' => '💰 Cek Saldo', 'callback_data' => 'cek_saldo']],
-                    [['text' => '📦 Beli Paket', 'callback_data' => 'beli_paket']],
+                    [['text' => '💰 Cek Saldo', 'request_command' => '/ceksaldo']],
+                    [['text' => '📦 Beli Paket', 'request_command' => '/menu']],
                     [['text' => '📞 Hubungi Admin', 'url' => 'https://t.me/ahmadcircleid']],
-                    [['text' => '❓ Bantuan', 'callback_data' => 'help']],
+                    [['text' => '❓ Bantuan', 'request_command' => '/help']],
                 ],
             ]),
         ];
@@ -294,12 +294,6 @@ $mkbot->cmd('/help|!Help', function ($id, $name, $notlp, $saldo) {
 
     $options = [
         'parse_mode' => 'html',
-        'reply_markup' => json_encode([
-            'inline_keyboard' => [
-                [['text' => '📚 Panduan Lengkap', 'url' => 'https://example.com/guide']],
-                [['text' => '🔙 Kembali ke Menu', 'callback_data' => 'back_to_menu']],
-            ],
-        ]),
     ];
 
     Bot::sendMessage($text, $options);
@@ -443,11 +437,11 @@ $mkbot->cmd('/topup', function ($id, $jumlah) {
                            'reply_markup' => json_encode([
                               'inline_keyboard' => [
                                  [
-                                    ['text' => '🛒 Beli Voucher', 'callback_data' => 'Menu'],
-                                    ['text' => '🔥 Promo Hot', 'callback_data' => 'informasi'],
+                                    ['text' => '🛒 Beli Voucher', 'request_command' => '/menu'],
+                                    ['text' => '🔥 Promo Hot', 'request_command' => '/info'],
                                  ],
                                  [
-                                    ['text' => '💰 Cek Saldo', 'callback_data' => 'ceksaldo'],
+                                    ['text' => '💰 Cek Saldo', 'request_command' => '/ceksaldo'],
                                  ],
                               ]]),
                            'parse_mode' => 'html',
@@ -1072,8 +1066,8 @@ $mkbot->cmd('!Menu|/Menu|/menu', function () {
             $vouchernamec2 = array_filter([$database4, $database5]);
 
             $menu_idakhir = [
-               ['text' => '💰 Cek Saldo', 'callback_data' => 'ceksaldo'],
-               ['text' => '🔖 Informasi', 'callback_data' => 'informasi'],
+               ['text' => '💰 Cek Saldo', 'request_command' => '/ceksaldo'],
+               ['text' => '🔖 Informasi', 'request_command' => '/info'],
             ];
 
             $send = [
