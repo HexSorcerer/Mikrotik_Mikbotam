@@ -1456,7 +1456,7 @@ $mkbot->on('callback', function ($command) {
 
                 Bot::sendMessage($Success, $options);
             }
-        } elseif ($command == 'Menu') {
+        } elseif ($command == 'Voucher') {
             $text = "";
             $data = json_decode($voucher_1, true);
             $text  = "┏━━━━━━━━━━━━━━━━━\n";

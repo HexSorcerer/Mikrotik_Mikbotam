@@ -1613,7 +1613,7 @@ $mkbot->on('callback', function ($command) {
 
             Bot::sendMessage($Success, $options);
          }
-      } elseif ($command == 'Menu') {
+      } elseif ($command == 'Voucher') {
          $data = json_decode($voucher_1, true);
          $text = "🎟️ <b>Daftar Voucher</b>\n\n";
          $text .= "┏━━━━ ℹ️ Informasi ━━━━\n";

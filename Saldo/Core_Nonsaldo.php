@@ -804,7 +804,7 @@ $mkbot->on('callback', function ($command) {
 
             Bot::sendMessage($Success, $options);
          }
-      } elseif ($command == 'Menu') {
+      } elseif ($command == 'Voucher') {
          $data = json_decode($Voucher_nonsaldo, true);
          $text = "";
          $text .= "👋 <b>Selamat Datang di Layanan Kami!</b>\n\n";
