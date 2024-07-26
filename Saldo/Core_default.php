@@ -1,9 +1,10 @@
 
 
-<?php
-   // =====================================================START====================//
 
-   /*
+<?php
+// =====================================================START====================//
+
+/*
 
    Core_default.php
 
@@ -11,9 +12,9 @@
 
     */
 
-   // =====================================================START SCRIPT====================//
+// =====================================================START SCRIPT====================//
 
-   date_default_timezone_set('Asia/Jakarta');
+date_default_timezone_set('Asia/Jakarta');
 include 'src/FrameBot.php';
 require_once '../config/system.conn.php';
 $mkbot = new FrameBot($token, $usernamebot);
@@ -37,30 +38,42 @@ $mkbot->cmd('/start|/Start', function () {
     Bot::sendChatAction('typing');
 
     if (has($idtelegram) == false) {
-        $text = "👋 <b>Selamat datang di Layanan Kami!</b>\n\n";
-        $text .= "Anda belum terdaftar sebagai pengguna. Untuk mulai menggunakan layanan kami, silakan daftar terlebih dahulu.\n\n";
-        $text .= 'Gunakan perintah /daftar untuk mendaftar atau tekan tombol di bawah ini.';
+        $text = "👋 <b>Selamat Datang di Layanan Kami!</b>\n\n";
+        $text .= "┏━━━━ ℹ️ Status Akun ━━━━\n";
+        $text .= "┃ Anda belum terdaftar sebagai pengguna\n";
+        $text .= "┃━━━━ 📝 Langkah Selanjutnya ━━━━\n";
+        $text .= "┃ Silakan daftar untuk mulai menggunakan\n";
+        $text .= "┃ layanan kami\n";
+        $text .= "┃━━━━ 🔍 Cara Mendaftar ━━━━\n";
+        $text .= "┃ • Ketik /daftar\n";
+        $text .= "┃ • Atau tekan tombol di bawah ini\n";
+        $text .= "┗━━━━━━━━━━━━━━━━━━━━";
 
         $options = [
             'parse_mode' => 'html',
             'reply_markup' => json_encode([
                 'inline_keyboard' => [
                     [['text' => '📝 Daftar Sekarang', 'request_command' => '/daftar']],
-                    [['text' => '❓ Informasi Layanan', 'request_command' => '/menu']],
+                    [['text' => '❓ Informasi Layanan', 'request_command' => '/voucher']],
                 ],
             ]),
         ];
     } else {
         $text = "👋 <b>Hai @$nametelegram!</b>\n\n";
-        $text .= "Selamat datang kembali di layanan kami. Ada yang bisa kami bantu?\n\n";
-        $text .= 'Gunakan perintah /help untuk melihat daftar bantuan atau pilih menu di bawah ini:';
+        $text .= "┏━━━━ 🌟 Selamat Datang Kembali ━━━━\n";
+        $text .= "┃ Senang melihat Anda lagi di layanan kami\n";
+        $text .= "┃━━━━ 🔍 Bantuan ━━━━\n";
+        $text .= "┃ Gunakan /help untuk melihat daftar bantuan\n";
+        $text .= "┃━━━━ 📌 Menu Cepat ━━━━\n";
+        $text .= "┃ Pilih menu di bawah untuk akses cepat:\n";
+        $text .= "┗━━━━━━━━━━━━━━━━━━━━";
 
         $options = [
             'parse_mode' => 'html',
             'reply_markup' => json_encode([
                 'inline_keyboard' => [
                     [['text' => '💰 Cek Saldo', 'request_command' => '/ceksaldo']],
-                    [['text' => '📦 Beli Paket', 'request_command' => '/menu']],
+                    [['text' => '📦 Beli Voucher', 'request_command' => '/voucher']],
                     [['text' => '📞 Hubungi Admin', 'url' => 'https://t.me/ahmadcircleid']],
                     [['text' => '❓ Bantuan', 'request_command' => '/help']],
                 ],
@@ -82,97 +95,139 @@ $mkbot->cmd('/deposit|/request', function ($jumlah) {
     if (!empty($jumlah)) {
         if (has($idtelegram) == false) {
             $text = "❌ <b>Anda belum terdaftar</b>\n\n";
-            $text .= 'Silakan daftar terlebih dahulu dengan /daftar sebelum melakukan request top up saldo.';
+            $text .= "┏━━━━ ℹ️ Informasi ━━━━\n";
+            $text .= "┃ Akun Anda belum terdaftar di sistem\n";
+            $text .= "┃━━━━ 📝 Petunjuk ━━━━\n";
+            $text .= "┃ Silakan daftar terlebih dahulu\n";
+            $text .= "┃ sebelum melakukan request top up\n";
+            $text .= "┃━━━━ 🔍 Cara Daftar ━━━━\n";
+            $text .= "┃ Ketik atau klik: /daftar\n";
+            $text .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
+            $text .= "Setelah terdaftar, Anda dapat melakukan request top up saldo.";
         } else {
             if (preg_match('/^[0-9]+$/', $jumlah)) {
                 if (strlen($jumlah) < 7) {
                     $text = "✅ <b>Permintaan Deposit Diterima</b>\n\n";
-                    $text .= "👤 User: @$nametelegram\n";
-                    $text .= '💰 Jumlah: '.rupiah($jumlah)."\n\n";
-                    $text .= "📸 Silakan kirimkan foto bukti pembayaran dengan caption:\n";
-                    $text .= "<code>#konfirmasi deposit $jumlah</code>\n\n";
-                    $text .= '⏳ Konfirmasi maksimal 2 jam setelah permintaan deposit.';
+                    $text .= "┏━━━━ 📋 Detail Permintaan ━━━━\n";
+                    $text .= "┃ 👤 User   : @$nametelegram\n";
+                    $text .= "┃ 💰 Jumlah : " . rupiah($jumlah) . "\n";
+                    $text .= "┃━━━━ 📸 Instruksi ━━━━\n";
+                    $text .= "┃ Kirim foto bukti pembayaran\n";
+                    $text .= "┃ dengan caption:\n";
+                    $text .= "┃ <code>#konfirmasi deposit $jumlah</code>\n";
+                    $text .= "┃━━━━ ⏳ Batas Waktu ━━━━\n";
+                    $text .= "┃ Konfirmasi maksimal 2 jam\n";
+                    $text .= "┃ setelah permintaan deposit\n";
+                    $text .= "┗━━━━━━━━━━━━━━━━━━━━";
 
                     $textsend = "🔔 <b>Permintaan Deposit Baru</b>\n\n";
-                    $textsend .= "👤 User: @$nametelegram\n";
-                    $textsend .= "🆔 ID: <code>$idtelegram</code>\n";
-                    $textsend .= '💰 Nominal: '.rupiah($jumlah)."\n\n";
-                    $textsend .= "Silakan tindak lanjuti atau hubungi user @$nametelegram\n\n";
-                    $textsend .= 'Tekan tombol di bawah untuk top up otomatis:';
+                    $textsend .= "┏━━━━ 👤 Informasi User ━━━━\n";
+                    $textsend .= "┃ Username : @$nametelegram\n";
+                    $textsend .= "┃ ID       : <code>$idtelegram</code>\n";
+                    $textsend .= "┃━━━━ 💰 Detail Deposit ━━━━\n";
+                    $textsend .= "┃ Nominal  : " . rupiah($jumlah) . "\n";
+                    $textsend .= "┃━━━━ 📝 Tindak Lanjut ━━━━\n";
+                    $textsend .= "┃ • Hubungi @$nametelegram\n";
+                    $textsend .= "┃ • Atau gunakan tombol di bawah\n";
+                    $textsend .= "┃   untuk top up otomatis\n";
+                    $textsend .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
+                    $textsend .= "👇 Tekan tombol untuk top up otomatis";
 
                     $kirimpelangan = [
-                       'chat_id' => $id_own,
-                       'text' => $textsend,
-                       'reply_markup' => json_encode([
-                          'inline_keyboard' => [
-                             [
-                                ['text' => 'QUICK TOP UP', 'callback_data' => '12'],
-                             ],
-                             [
-                                ['text' => rupiah($jumlah), 'callback_data' => "tp|$jumlah|$idtelegram|$nametelegram"],
-                             ],
-                             [
-                                ['text' => 'OR CUSTOM', 'callback_data' => '12'],
-                             ],
-                             [
-                                ['text' => '10000', 'callback_data' => "tp|10000|$idtelegram|$nametelegram"],
-                                ['text' => '15000', 'callback_data' => "tp|15000|$idtelegram|$nametelegram"],
-                                ['text' => '20000', 'callback_data' => "tp|20000|$idtelegram|$nametelegram"],
-                             ],
-                             [
-                                ['text' => '25000', 'callback_data' => "tp|25000|$idtelegram|$nametelegram"],
-                                ['text' => '30000', 'callback_data' => "tp|30000|$idtelegram|$nametelegram"],
-                                ['text' => '50000', 'callback_data' => "tp|50000|$idtelegram|$nametelegram"],
-                             ],
-                             [
-                                ['text' => '100000', 'callback_data' => "tp|100000|$idtelegram|$nametelegram"],
-                                ['text' => '150000', 'callback_data' => "tp|150000|$idtelegram|$nametelegram"],
-                                ['text' => '200000', 'callback_data' => "tp|200000|$idtelegram|$nametelegram"],
-                             ],
-                          ]]),
-                       'parse_mode' => 'html',
+                        'chat_id' => $id_own,
+                        'text' => $textsend,
+                        'reply_markup' => json_encode([
+                            'inline_keyboard' => [
+                                [
+                                    ['text' => 'QUICK TOP UP', 'callback_data' => '12'],
+                                ],
+                                [
+                                    ['text' => rupiah($jumlah), 'callback_data' => "tp|$jumlah|$idtelegram|$nametelegram"],
+                                ],
+                                [
+                                    ['text' => 'OR CUSTOM', 'callback_data' => '12'],
+                                ],
+                                [
+                                    ['text' => '10000', 'callback_data' => "tp|10000|$idtelegram|$nametelegram"],
+                                    ['text' => '15000', 'callback_data' => "tp|15000|$idtelegram|$nametelegram"],
+                                    ['text' => '20000', 'callback_data' => "tp|20000|$idtelegram|$nametelegram"],
+                                ],
+                                [
+                                    ['text' => '25000', 'callback_data' => "tp|25000|$idtelegram|$nametelegram"],
+                                    ['text' => '30000', 'callback_data' => "tp|30000|$idtelegram|$nametelegram"],
+                                    ['text' => '50000', 'callback_data' => "tp|50000|$idtelegram|$nametelegram"],
+                                ],
+                                [
+                                    ['text' => '100000', 'callback_data' => "tp|100000|$idtelegram|$nametelegram"],
+                                    ['text' => '150000', 'callback_data' => "tp|150000|$idtelegram|$nametelegram"],
+                                    ['text' => '200000', 'callback_data' => "tp|200000|$idtelegram|$nametelegram"],
+                                ],
+                            ]
+                        ]),
+                        'parse_mode' => 'html',
                     ];
 
                     Bot::sendMessage($kirimpelangan['text'], $kirimpelangan);
                 } else {
-                    $text = "⚠️ <b>Peringatan</b>\n\nMaaf, maksimal deposit top up adalah Rp 1.000.000,00";
+                    $text = "⚠️ <b>Peringatan: Batas Maksimal</b>\n\n";
+                    $text .= "┏━━━━ ℹ️ Informasi ━━━━\n";
+                    $text .= "┃ Deposit melebihi batas maksimal\n";
+                    $text .= "┃━━━━ 💰 Batas Maksimal ━━━━\n";
+                    $text .= "┃ Rp 1.000.000,00\n";
+                    $text .= "┃━━━━ 📝 Saran ━━━━\n";
+                    $text .= "┃ Silakan masukkan jumlah yang lebih kecil\n";
+                    $text .= "┗━━━━━━━━━━━━━━━━━━━━";
                 }
             } else {
-                $text = "❌ <b>Input Tidak Valid</b>\n\nMaaf, input nominal saldo hanya boleh berupa angka.";
+                $text = "❌ <b>Input Tidak Valid</b>\n\n";
+                $text .= "┏━━━━ ℹ️ Informasi ━━━━\n";
+                $text .= "┃ Input nominal saldo tidak valid\n";
+                $text .= "┃━━━━ 📝 Petunjuk ━━━━\n";
+                $text .= "┃ • Gunakan hanya angka\n";
+                $text .= "┃ • Tanpa titik atau koma\n";
+                $text .= "┃━━━━ 🔍 Contoh ━━━━\n";
+                $text .= "┃ Benar  : 50000\n";
+                $text .= "┃ Salah  : 50.000 atau 50,000\n";
+                $text .= "┗━━━━━━━━━━━━━━━━━━━━";
             }
         }
     } else {
         $text = "💰 <b>Request Deposit Saldo</b>\n\n";
-        $text .= "Untuk melakukan request deposit, gunakan format:\n";
-        $text .= "<code>/deposit [nominal]</code>\n\n";
-        $text .= "Contoh:\n";
-        $text .= "• <code>/deposit 10000</code>\n";
-        $text .= "• <code>/deposit 50000</code>\n\n";
-        $text .= 'Atau pilih nominal dari tombol di bawah ini:';
+        $text .= "┏━━━━ 📝 Cara Request ━━━━\n";
+        $text .= "┃ Gunakan format berikut:\n";
+        $text .= "┃ <code>/deposit [nominal]</code>\n";
+        $text .= "┃━━━━ 🔍 Contoh ━━━━\n";
+        $text .= "┃ • <code>/deposit 10000</code>\n";
+        $text .= "┃ • <code>/deposit 50000</code>\n";
+        $text .= "┃━━━━ 💡 Alternatif ━━━━\n";
+        $text .= "┃ Pilih nominal dari tombol di bawah\n";
+        $text .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
+        $text .= "👇 Silakan pilih atau ketik nominal deposit";
 
         $options = [
-          'reply_markup' => json_encode([
-             'inline_keyboard' => [
-                [
-                   ['text' => '⬇ REQUEST ⬇', 'callback_data' => '12'],
-                ],
-                [
-                   ['text' => '10000', 'callback_data' => 'tps|10000'],
-                   ['text' => '15000', 'callback_data' => 'tps|15000'],
-                   ['text' => '20000', 'callback_data' => 'tps|20000'],
-                ],
-                [
-                   ['text' => '25000', 'callback_data' => 'tps|25000'],
-                   ['text' => '30000', 'callback_data' => 'tps|30000'],
-                   ['text' => '50000', 'callback_data' => 'tps|50000'],
-                ],
-                [
-                   ['text' => '100000', 'callback_data' => 'tps|100000'],
-                   ['text' => '150000', 'callback_data' => 'tps|150000'],
-                   ['text' => '200000', 'callback_data' => 'tps|200000'],
-                ],
-             ]]),
-          'parse_mode' => 'html',
+            'reply_markup' => json_encode([
+                'inline_keyboard' => [
+                    [
+                        ['text' => '⬇ REQUEST ⬇', 'callback_data' => '12'],
+                    ],
+                    [
+                        ['text' => '10000', 'callback_data' => 'tps|10000'],
+                        ['text' => '15000', 'callback_data' => 'tps|15000'],
+                        ['text' => '20000', 'callback_data' => 'tps|20000'],
+                    ],
+                    [
+                        ['text' => '25000', 'callback_data' => 'tps|25000'],
+                        ['text' => '30000', 'callback_data' => 'tps|30000'],
+                        ['text' => '50000', 'callback_data' => 'tps|50000'],
+                    ],
+                    [
+                        ['text' => '100000', 'callback_data' => 'tps|100000'],
+                        ['text' => '150000', 'callback_data' => 'tps|150000'],
+                        ['text' => '200000', 'callback_data' => 'tps|200000'],
+                    ],
+                ]
+            ]),
+            'parse_mode' => 'html',
         ];
     }
 
@@ -190,11 +245,11 @@ $mkbot->cmd('/cekid|/Cekid', function ($jumlah) {
     $statusStr = $statusId ? '✅ Terdaftar' : '❌ Belum Terdaftar';
 
     $text = "🔍 <b>Informasi ID Anda</b>\n\n";
-    $text .= "┏━━━━━━━━ 👤 Detail Pengguna ━━━━━━━━┓\n";
+    $text .= "┏━ 👤 Detail Pengguna ━\n";
     $text .= "┃ 🆔 ID User  : <code>$id</code>\n";
     $text .= "┃ 👤 Username : @$name\n";
     $text .= "┃ 📊 Status   : $statusStr\n";
-    $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
+    $text .= "┗━━━━━━━━━━━━\n";
 
     if (!$statusId) {
         $text .= "\n⚠️ Anda belum terdaftar. Gunakan /daftar untuk mendaftar.";
@@ -227,26 +282,33 @@ $mkbot->cmd('/daftar', function () {
 
             if (empty($cek)) {
                 $text = "❌ <b>Pendaftaran Gagal</b>\n\n";
-                $text .= "Mohon maaf, sistem kami sedang mengalami gangguan.\n";
-                $text .= 'Silakan hubungi Administrator untuk bantuan lebih lanjut.';
+                $text .= "┏━━━━ ℹ️ Informasi ━━━━\n";
+                $text .= "┃ Sistem kami sedang mengalami gangguan\n";
+                $text .= "┣━━━━ 🔧 Tindak Lanjut ━━━━\n";
+                $text .= "┃ Silakan hubungi Administrator\n";
+                $text .= "┃ untuk bantuan lebih lanjut\n";
+                $text .= "┗━━━━━━━━━━━━━━━━━━━━";
             } else {
                 $text = "✅ <b>Pendaftaran Berhasil</b>\n\n";
-                $text .= "┏━━━━━━━━ 📋 Informasi Akun ━━━━━━━━┓\n";
+                $text .= "┏━━━━ 📋 Informasi Akun ━━━━\n";
                 $text .= "┃ 🆔 ID User  : <code>$idtelegram</code>\n";
                 $text .= "┃ 👤 Username : @$nametelegram\n";
                 $text .= "┃ ✅ Status   : Terdaftar\n";
-                $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
-                $text .= "💰 Silakan isi saldo Anda di outlet kami.\n\n";
-                $text .= '🙏 Terima kasih atas kepercayaan Anda menggunakan layanan kami.';
+                $text .= "┣━━━━ 💰 Langkah Selanjutnya ━━━━\n";
+                $text .= "┃ Silakan isi saldo Anda di outlet kami\n";
+                $text .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
+                $text .= "🙏 Terima kasih atas kepercayaan Anda\n";
+                $text .= "menggunakan layanan kami.";
             }
         } else {
-            $text = "ℹ️ <b>Informasi</b>\n\n";
-            $text .= "Anda sudah terdaftar dalam layanan ini.\n\n";
-            $text .= "┏━━━━━━━━ 📋 Informasi Akun ━━━━━━━━┓\n";
+            $text = "ℹ️ <b>Informasi Akun</b>\n\n";
+            $text .= "┏━━━━ 📋 Detail Akun ━━━━\n";
             $text .= "┃ 🆔 ID User  : <code>$idtelegram</code>\n";
             $text .= "┃ 👤 Username : @$nametelegram\n";
             $text .= "┃ ✅ Status   : Terdaftar\n";
-            $text .= '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛';
+            $text .= "┣━━━━ 🔔 Pemberitahuan ━━━━\n";
+            $text .= "┃ Anda sudah terdaftar dalam layanan ini\n";
+            $text .= "┗━━━━━━━━━━━━━━━━━━━━";
         }
     }
 
@@ -257,7 +319,7 @@ $mkbot->cmd('/daftar', function () {
     return Bot::sendMessage($text, $options);
 });
 // help commands
-$mkbot->cmd('/help|!Help', function ($id, $name, $notlp, $saldo) {
+$mkbot->cmd('/help|!Help|/menu|!Menu|/Menu|!menu', function ($id, $name, $notlp, $saldo) {
     include '../config/system.conn.php';
     $info = bot::message();
     $msgid = $info['message_id'];
@@ -266,18 +328,18 @@ $mkbot->cmd('/help|!Help', function ($id, $name, $notlp, $saldo) {
     Bot::sendChatAction('typing');
 
     $text = "🔰 <b>Daftar Perintah</b>\n\n";
-    $text .= "┏━━━━━━━━ 🚀 Perintah Umum ━━━━━━━━┓\n";
-    $text .= "┃ 📋 /menu     - Menu Voucher\n";
+    $text .= "┏━━━━ 🚀 Perintah Umum ━━━━\n";
+    $text .= "┃ 📋 /voucher     - Menu Voucher\n";
     $text .= "┃ 📝 /daftar   - Daftar sebagai Member\n";
     $text .= "┃ 💰 /ceksaldo - Cek Saldo Layanan\n";
     $text .= "┃ 🔍 /cekid    - Status User\n";
     $text .= "┃ 📷 /qrcode   - Terjemahkan QR Code\n";
     $text .= "┃ 💳 /deposit  - Permintaan Deposit\n";
-    $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
+    $text .= "┗━━━━━━━━━━━━━━━━━━\n";
 
     if ($idtelegram == $id_own) {
         $text .= "\n🛡️ <b>Perintah Administrator</b>\n\n";
-        $text .= "┏━━━━━━━━ 🔧 Admin Tools ━━━━━━━━┓\n";
+        $text .= "┏━━━━ 🔧 Admin Tools ━━━━\n";
         $text .= "┃ 🛠️ dbg       - Pesan Debug\n";
         $text .= "┃ 📇 /daftarid - Daftar User Manual\n";
         $text .= "┃ 📉 /topdown  - Kurangi Saldo User\n";
@@ -287,10 +349,10 @@ $mkbot->cmd('/help|!Help', function ($id, $name, $notlp, $saldo) {
         $text .= "┃ 👁️ /netwatch - Netwatch Router\n";
         $text .= "┃ 📊 /report   - Laporan Mikhbotam\n";
         $text .= "┃ ❓ /user     - Cari User Hotspot\n";
-        $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
+        $text .= "┗━━━━━━━━━━━━━━━━━━\n";
     }
 
-    $text .= "\n📌 Ketik perintah tanpa tanda '/' untuk informasi lebih lanjut.";
+    $text .= "\n📌 Ketik atau klik perintah diatas untuk mengakses fitur";
 
     $options = [
         'parse_mode' => 'html',
@@ -319,12 +381,12 @@ $mkbot->cmd('/daftarid', function ($id, $name, $notlp, $saldo) {
             if (empty($lihat)) {
                 $hasil = daftarid($id, $name, $notlp, $saldo);
                 $text = "✅ <b>Pendaftaran Berhasil</b>\n\n";
-                $text .= "┏━━━━━━━━ 📋 Detail User ━━━━━━━━┓\n";
+                $text .= "┏━━━━ 📋 Detail User ━━━━\n";
                 $text .= "┃ 🆔 ID User     : <code>$id</code>\n";
                 $text .= "┃ 👤 Nama        : $name\n";
                 $text .= "┃ 📞 No. Telepon : $notlp\n";
-                $text .= '┃ 💰 Saldo Awal  : '.rupiah($saldo)."\n";
-                $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+                $text .= '┃ 💰 Saldo Awal  : ' . rupiah($saldo) . "\n";
+                $text .= "┗━━━━━━━━━━━━━━━━━━\n\n";
                 $text .= $hasil; // Tambahkan pesan hasil dari fungsi daftarid() jika ada
             } else {
                 $text = "⚠️ <b>Peringatan:</b> User Sudah Terdaftar\n\n";
@@ -367,17 +429,17 @@ $mkbot->cmd('/topdown', function ($id, $jumlahan) {
                     if (strlen($jumlahan) < 7) {
                         $topdown = topdown($id, $jumlahan);
                         $text = "💸 <b>Informasi Refund</b>\n\n";
-                        $text .= "┏━━━━━━━━ 📊 Detail Refund ━━━━━━━━┓\n";
+                        $text .= "┏━━━━ 📊 Detail Refund ━━━━\n";
                         $text .= "┃ 🆔 ID User     : <code>$id</code>\n";
-                        $text .= '┃ 💰 Jumlah      : '.rupiah($jumlahan)."\n";
-                        $text .= '┃ 💼 Saldo Akhir : '.rupiah(lihatsaldo($id))."\n";
-                        $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+                        $text .= '┃ 💰 Jumlah      : ' . rupiah($jumlahan) . "\n";
+                        $text .= '┃ 💼 Saldo Akhir : ' . rupiah(lihatsaldo($id)) . "\n";
+                        $text .= "┗━━━━━━━━━━━━━━━━━━\n\n";
                         $text .= '✅ Penarikan saldo berhasil dilakukan.';
 
                         // Kirim notifikasi ke pengguna
                         $userNotif = "ℹ️ <b>Pemberitahuan Refund</b>\n\n";
-                        $userNotif .= 'Saldo Anda telah dikurangi sebesar '.rupiah($jumlahan)."\n";
-                        $userNotif .= 'Saldo Anda saat ini: '.rupiah(lihatsaldo($id));
+                        $userNotif .= 'Saldo Anda telah dikurangi sebesar ' . rupiah($jumlahan) . "\n";
+                        $userNotif .= 'Saldo Anda saat ini: ' . rupiah(lihatsaldo($id));
 
                         $options = [
                             'chat_id' => $id,
@@ -386,7 +448,7 @@ $mkbot->cmd('/topdown', function ($id, $jumlahan) {
                         Bot::sendMessage($userNotif, $options);
                     } else {
                         $text = "⚠️ <b>Peringatan:</b> Maksimal Refund\n\n";
-                        $text .= 'Maaf, maksimal refund adalah '.rupiah(1000000).'.';
+                        $text .= 'Maaf, maksimal refund adalah ' . rupiah(1000000) . '.';
                     }
                 } else {
                     $text = "❌ <b>Error:</b> Input Tidak Valid\n\n";
@@ -433,23 +495,24 @@ $mkbot->cmd('/topup', function ($id, $jumlah) {
                         $text = topupresseller($id, $name, $jumlah, $id_own);
 
                         $kirimpelangan = [
-                           'chat_id' => $id,
-                           'reply_markup' => json_encode([
-                              'inline_keyboard' => [
-                                 [
-                                    ['text' => '🛒 Beli Voucher', 'request_command' => '/menu'],
-                                    ['text' => '🔥 Promo Hot', 'request_command' => '/info'],
-                                 ],
-                                 [
-                                    ['text' => '💰 Cek Saldo', 'request_command' => '/ceksaldo'],
-                                 ],
-                              ]]),
-                           'parse_mode' => 'html',
+                            'chat_id' => $id,
+                            'reply_markup' => json_encode([
+                                'inline_keyboard' => [
+                                    [
+                                        ['text' => '🛒 Beli Voucher', 'request_command' => '/voucher'],
+                                        ['text' => '🔥 Promo Hot', 'request_command' => '/info'],
+                                    ],
+                                    [
+                                        ['text' => '💰 Cek Saldo', 'request_command' => '/ceksaldo'],
+                                    ],
+                                ]
+                            ]),
+                            'parse_mode' => 'html',
                         ];
                         Bot::sendMessage($text, $kirimpelangan);
                     } else {
                         $text = "⚠️ <b>Peringatan:</b> Maksimal Top Up\n\n";
-                        $text .= 'Maaf, maksimal top up adalah '.rupiah(1000000).'.';
+                        $text .= 'Maaf, maksimal top up adalah ' . rupiah(1000000) . '.';
                     }
                 } else {
                     $text = "❌ <b>Error:</b> Input Tidak Valid\n\n";
@@ -467,7 +530,7 @@ $mkbot->cmd('/topup', function ($id, $jumlah) {
     }
 
     $options = [
-       'parse_mode' => 'html',
+        'parse_mode' => 'html',
     ];
 
     return Bot::sendMessage($text, $options);
@@ -489,13 +552,13 @@ $mkbot->cmd('/lihatsaldo|/ceksaldo', function ($jumlah) {
     } else {
         $angka = lihatsaldo($id);
         $text = "💰 <b>Informasi Saldo</b>\n\n";
-        $text .= "┏━━━━━━━━ 👤 Detail Pengguna ━━━━━━━━┓\n";
+        $text .= "┏━━━  👤 Detail Pengguna ━━━\n";
         $text .= "┃ 🆔 ID Pengguna : <code>$id</code>\n";
         $text .= "┃ 👤 Nama        : @$name\n";
-        $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
-        $text .= "┏━━━━━━━━ 💵 Informasi Saldo ━━━━━━━━┓\n";
-        $text .= '┃ 💰 Saldo       : <b>'.rupiah($angka)."</b>\n";
-        $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+        $text .= "┗━━━━━━━━━━━━━━━\n\n";
+        $text .= "┏━━━ 💵 Informasi Saldo ━━━\n";
+        $text .= '┃ 💰 Saldo       : <b>' . rupiah($angka) . "</b>\n";
+        $text .= "┗━━━━━━━━━━━━━━━\n\n";
 
         if ($angka < 10000) {
             $text .= '⚠️ <i>Saldo Anda sudah menipis. Segera lakukan pengisian ulang!</i>';
@@ -505,7 +568,7 @@ $mkbot->cmd('/lihatsaldo|/ceksaldo', function ($jumlah) {
     }
 
     $options = [
-       'parse_mode' => 'html',
+        'parse_mode' => 'html',
     ];
 
     return Bot::sendMessage($text, $options);
@@ -553,35 +616,35 @@ $mkbot->cmd('/resource|/Resource', function () {
             $kerusakan = $jeruk['bad-blocks'];
 
             $text = "📡 <b>Resource Information</b>  🌡️ $sehat°C\n\n";
-            $text .= "┏━━━━━━━━ 🖥️ System Info ━━━━━━━━┓\n";
+            $text .= "┏━━━━ 🖥️ System Info ━━━━\n";
             $text .= "┃ 🏷️ Boardname : $board\n";
             $text .= "┃ 🏗️ Platform  : $platform\n";
-            $text .= '┃ ⏱️ Uptime    : '.formatDTM($uptime)."\n";
-            $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+            $text .= '┃ ⏱️ Uptime    : ' . formatDTM($uptime) . "\n";
+            $text .= "┗━━━━━━━━━━━━━━━━━━\n\n";
 
-            $text .= "┏━━━━━━━━ 💻 CPU Info ━━━━━━━━━━┓\n";
+            $text .= "┏━━━━ 💻 CPU Info ━━━━━━\n";
             $text .= "┃ 🔄 CPU Load  : $cpuload%\n";
             $text .= "┃ 💻 CPU Type  : $cpu\n";
             $text .= "┃ ⚡ CPU Freq  : $cpufreq MHz / $cpucount core(s)\n";
-            $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+            $text .= "┗━━━━━━━━━━━━━━━━━━\n\n";
 
-            $text .= "┏━━━━━━━━ 🧠 Memory Usage ━━━━━━━┓\n";
+            $text .= "┏━━━━ 🧠 Memory Usage ━━━━━\n";
             $text .= "┃ 💾 Total     : $memory\n";
             $text .= "┃ 🆓 Free      : $fremem\n";
             $text .= "┃ 📊 Used      : $mempersen%\n";
-            $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+            $text .= "┗━━━━━━━━━━━━━━━━━━\n\n";
 
-            $text .= "┏━━━━━━━━ 💽 Disk Usage ━━━━━━━━┓\n";
+            $text .= "┏━━━━ 💽 Disk Usage ━━━━\n";
             $text .= "┃ 💾 Total     : $hdd\n";
             $text .= "┃ 🆓 Free      : $frehdd\n";
             $text .= "┃ 📊 Used      : $hddpersen%\n";
-            $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+            $text .= "┗━━━━━━━━━━━━━━━━━━\n\n";
 
-            $text .= "┏━━━━━━ 🔧 Disk Health ━━━━━━━━┓\n";
+            $text .= "┏━━━━━━ 🔧 Disk Health ━━━━\n";
             $text .= "┃ 📝 Write Sectors : $sector\n";
             $text .= "┃ 🔄 Since Reboot  : $setelahreboot\n";
             $text .= "┃ ⚠️ Bad Blocks    : $kerusakan%\n";
-            $text .= '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛';
+            $text .= '┗━━━━━━━━━━━━━━━━━━';
         } else {
             $text = '❌ Gagal terhubung ke Router. Silakan periksa koneksi Anda.';
         }
@@ -608,9 +671,9 @@ $mkbot->cmd('!Hotspot|?hotspot|/hotspot|/Hotspot|!Hotspot', function ($user, $te
         if ($API->connect($mikrotik_ip, $mikrotik_username, $mikrotik_password, $mikrotik_port)) {
             if ($user == 'aktif') {
                 if ($telo != '') {
-                    $pepaya = $API->comm('/ip/hotspot/active/print', ['?server' => ''.$telo.'']);
+                    $pepaya = $API->comm('/ip/hotspot/active/print', ['?server' => '' . $telo . '']);
                     $anggur = count($pepaya);
-                    $apel = $API->comm('/ip/hotspot/active/print', ['count-only' => '', '?server' => ''.$telo.'']);
+                    $apel = $API->comm('/ip/hotspot/active/print', ['count-only' => '', '?server' => '' . $telo . '']);
                 } else {
                     $pepaya = $API->comm('/ip/hotspot/active/print');
                     $anggur = count($pepaya);
@@ -632,18 +695,18 @@ $mkbot->cmd('!Hotspot|?hotspot|/hotspot|/Hotspot|!Hotspot', function ($user, $te
                     $byteso = formatBytes($mangga['bytes-out'], 2);
                     $loginby = $mangga['login-by'];
                     $comment = $mangga['comment'];
-                    $text .= "┏━━━━━━━━ 👤 User Aktif ━━━━━━━━┓\n";
+                    $text .= "┏━━━━ 👤 User Aktif ━━━━\n";
                     $text .= "┃ 🆔 ID        : $id\n";
                     $text .= "┃ 👤 User      : $user\n";
                     $text .= "┃ 🌐 IP        : $address\n";
                     $text .= "┃ ⏱️ Uptime    : $uptime\n";
-                    $text .= "┣━━━━━━━━ Penggunaan Data ━━━━━━━┫\n";
+                    $text .= "┃━━━━━━━━ Penggunaan Data ━━━━━━━\n";
                     $text .= "┃ ⬇️ Byte IN   : $bytesi\n";
                     $text .= "┃ ⬆️ Byte OUT  : $byteso\n";
-                    $text .= "┣━━━━━━━━━━ Info Sesi ━━━━━━━━━━┫\n";
+                    $text .= "┃━━━━━━━━━━ Info Sesi ━━━━━━━━━━\n";
                     $text .= "┃ 🕒 Session   : $usesstime\n";
                     $text .= "┃ 🔐 Login     : $loginby\n";
-                    $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+                    $text .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
                     $text .= "🔍 Lihat detail: /see_$server\n\n";
                 }
 
@@ -669,15 +732,15 @@ $mkbot->cmd('!Hotspot|?hotspot|/hotspot|/Hotspot|!Hotspot', function ($user, $te
                     $data4 = $ARRAY[$i]['mac-address'];
                     $data5 = $ARRAY[$i]['profile'];
                     $data6 = $ARRAY[$i]['limit-uptime'];
-                    $text .= "┏━━━━━━━━ 👥 User Info ━━━━━━━━┓\n";
+                    $text .= "┏━━━━ 👥 User Info ━━━━\n";
                     $text .= "┃ 🆔 ID       : $dataid\n";
                     $text .= "┃ 👤 Nama     : $name\n";
                     $text .= "┃ 🔑 Password : $data3\n";
                     $text .= "┃ 📱 MAC      : $data4\n";
                     $text .= "┃ 👥 Profil   : $data5\n";
-                    $text .= "┣━━━━━━━━━━ Aksi ━━━━━━━━━━━━━┫\n";
+                    $text .= "┃━━━━━━━━━━ Aksi ━━━━━━━━━━━━━\n";
                     $text .= "┃ 🗑️ Hapus User: /rEm0v$dataid\n";
-                    $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+                    $text .= "┗━━━━━━━━━━━━━━━━━━\n\n";
                 }
 
                 $arr2 = str_split($text, 4000);
@@ -698,22 +761,22 @@ $mkbot->cmd('!Hotspot|?hotspot|/hotspot|/Hotspot|!Hotspot', function ($user, $te
                     $sapubasah = str_replace('-', '0', $jambu['name']);
                     $sapubasahbasah = str_replace(' ', '11', $sapubasah);
 
-                    $text .= '/see_'.$sapubasahbasah."\n";
+                    $text .= '/see_' . $sapubasahbasah . "\n";
                 }
 
                 $keyboard = [['!Hotspot user', '!Hotspot aktif'], ['!Menu', '!Help'], ['!Hide']];
                 $replyMarkup = ['keyboard' => $keyboard, 'resize_keyboard' => true, 'one_time_keyboard' => true, 'selective' => true];
                 $options = [
-                   'reply' => true,
-                   'reply_markup' => json_encode($replyMarkup),
+                    'reply' => true,
+                    'reply_markup' => json_encode($replyMarkup),
                 ];
                 Bot::sendMessage($text, $options);
             }
         } else {
             $text = '❌ Tidak dapat terhubung dengan Mikrotik. Silakan coba kembali.';
             $options = [
-               'reply' => true,
-               'parse_mode' => 'html',
+                'reply' => true,
+                'parse_mode' => 'html',
             ];
             Bot::sendMessage($text, $options);
         }
@@ -747,28 +810,28 @@ $mkbot->cmd('?hs|!User|?user|!user|', function ($name) {
             } else {
                 foreach ($ARRAY as $index => $baris) {
                     $text = '';
-                    $text .= "┏━━━━━━━━ 🌟 Hotspot Client ━━━━━━━━┓\n";
-                    $text .= '┃ 👤 Nama     : '.$baris['name']."\n";
-                    $text .= '┃ 🔑 Password : '.$baris['password']."\n";
-                    $text .= '┃ ⏳ Limit    : '.$baris['limit-uptime']."\n";
-                    $text .= '┃ ⏱️ Uptime   : '.formatDTM($baris['uptime'])."\n";
-                    $text .= '┃ ⬆️ Upload   : '.formatBytes($baris['bytes-in'])."\n";
-                    $text .= '┃ ⬇️ Download : '.formatBytes($baris['bytes-out'])."\n";
-                    $text .= '┃ 👥 Profil   : '.$baris['profile']."\n";
+                    $text .= "┏━━━━ 🌟 Hotspot Client ━━━━\n";
+                    $text .= '┃ 👤 Nama     : ' . $baris['name'] . "\n";
+                    $text .= '┃ 🔑 Password : ' . $baris['password'] . "\n";
+                    $text .= '┃ ⏳ Limit    : ' . $baris['limit-uptime'] . "\n";
+                    $text .= '┃ ⏱️ Uptime   : ' . formatDTM($baris['uptime']) . "\n";
+                    $text .= '┃ ⬆️ Upload   : ' . formatBytes($baris['bytes-in']) . "\n";
+                    $text .= '┃ ⬇️ Download : ' . formatBytes($baris['bytes-out']) . "\n";
+                    $text .= '┃ 👥 Profil   : ' . $baris['profile'] . "\n";
                     $data = $baris['.id'];
                     $dataid = str_replace('*', 'id', $data);
-                    $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
+                    $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━\n";
                 }
 
                 foreach ($get as $index => $baris) {
-                    $experid = "┏━━━━━━━━ ⏰ Informasi Waktu ━━━━━━━━┓\n";
-                    $experid .= '┃ 🕐 Start-time : '.$baris['start-date'].' '.$baris['start-time']."\n";
-                    $experid .= '┃ 🔄 Interval   : '.$baris['interval']."\n";
-                    $experid .= '┃ 📅 Expired    : '.$baris['next-run']."\n";
-                    $experid .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
+                    $experid = "┏━━━━ ⏰ Informasi Waktu ━━━━\n";
+                    $experid .= '┃ 🕐 Start-time : ' . $baris['start-date'] . ' ' . $baris['start-time'] . "\n";
+                    $experid .= '┃ 🔄 Interval   : ' . $baris['interval'] . "\n";
+                    $experid .= '┃ 📅 Expired    : ' . $baris['next-run'] . "\n";
+                    $experid .= "┗━━━━━━━━━━━━━━━━━━━━━━━\n";
                 }
 
-                $texta = $text.$experid."\n🗑️ Hapus User: /rEm0v$dataid\n\n";
+                $texta = $text . $experid . "\n🗑️ Hapus User: /rEm0v$dataid\n\n";
             }
         } else {
             $texta = '❌ Tidak dapat terhubung dengan Mikrotik. Silakan coba kembali.';
@@ -790,19 +853,19 @@ $mkbot->cmd('/report', function ($name) {
     Bot::sendChatAction('typing');
 
     if ($iduser == $id_own) {
-        $text = '📊 <b>Laporan Bulanan</b> - '.date('d-m-Y')."\n\n";
-        $text .= "┏━━━━━━━━ 📈 Statistik ━━━━━━━━┓\n";
-        $text .= '┃ 🎟️ Total Voucher : '.countvoucher()." Voucher\n";
-        $text .= '┃ 💰 Top up Debit  : '.rupiah(getcounttopup())."\n";
-        $text .= '┃ 📊 Mutasi Voucher: '.rupiah(estimasidata())."\n";
-        $text .= '┃ 👥 User Baru     : + '.countuser()." User\n";
-        $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
+        $text = '📊 <b>Laporan Bulanan</b> - ' . date('d-m-Y') . "\n\n";
+        $text .= "┏━━━━ 📈 Statistik ━━━━\n";
+        $text .= '┃ 🎟️ Total Voucher : ' . countvoucher() . " Voucher\n";
+        $text .= '┃ 💰 Top up Debit  : ' . rupiah(getcounttopup()) . "\n";
+        $text .= '┃ 📊 Mutasi Voucher: ' . rupiah(estimasidata()) . "\n";
+        $text .= '┃ 👥 User Baru     : + ' . countuser() . " User\n";
+        $text .= "┗━━━━━━━━━━━━━━━━━\n";
     } else {
         $text = '🚫 Maaf! Akses hanya untuk Administrator';
     }
 
     $options = [
-       'parse_mode' => 'html',
+        'parse_mode' => 'html',
     ];
     Bot::sendMessage($text, $options);
 });
@@ -832,7 +895,7 @@ $mkbot->cmd('/netwatch|/Netwatch', function () {
                 $status = $ARRAY[$i]['status'];
                 $since = $ARRAY[$i]['since'];
 
-                $text .= "┏━━━━━━━ 🖥️ Netwatch $no ━━━━━━━┓\n";
+                $text .= "┏━━━━━━━ 🖥️ Netwatch $no ━━━━━━━\n";
                 $text .= "┃ 🌐 Host   : $host\n";
                 $text .= '┃ 🕒 Status : ';
 
@@ -843,7 +906,7 @@ $mkbot->cmd('/netwatch|/Netwatch', function () {
                 }
 
                 $text .= "┃ 🕰️ Since  : $since\n";
-                $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+                $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
             }
         } else {
             $text = '❌ Tidak dapat terhubung dengan Mikrotik. Silakan coba kembali.';
@@ -865,7 +928,7 @@ $mkbot->cmd('/netwatch|/Netwatch', function () {
 $mkbot->cmd('dbg', function ($pesan) {
     $info = bot::message();
     $id = $info['chat']['id'];
-    $text = '<code>'.json_encode($info, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).'</code>';
+    $text = '<code>' . json_encode($info, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</code>';
     $options = ['parse_mode' => 'html'];
 
     return Bot::sendMessage($text, $options);
@@ -883,14 +946,14 @@ $mkbot->cmd('/qrcode', function () {
         $cek = Bot::getFile($ambilgambar);
         $hasilkirimaaa = json_decode($cek, true);
         $hasilurl = $hasilkirimaaa['result']['file_path'];
-        $urlkirim = 'http://api.qrserver.com/v1/read-qr-code/?fileurl=https://api.telegram.org/file/bot'.$token.'/'.$hasilurl;
+        $urlkirim = 'http://api.qrserver.com/v1/read-qr-code/?fileurl=https://api.telegram.org/file/bot' . $token . '/' . $hasilurl;
         $hasilurla = file_get_contents($urlkirim);
         $hasilkirim = json_decode($hasilurla, true);
 
         $terjemah = "🔍 <b>Hasil Scan QR Code</b>\n\n";
-        $terjemah .= "┏━━━━━━━━ 📊 Informasi ━━━━━━━━┓\n";
-        $terjemah .= '┃ 📝 Isi : '.$hasilkirim[0]['symbol'][0]['data']."\n";
-        $terjemah .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
+        $terjemah .= "┏━━━━ 📊 Informasi ━━━━\n";
+        $terjemah .= '┃ 📝 Isi : ' . $hasilkirim[0]['symbol'][0]['data'] . "\n";
+        $terjemah .= "┗━━━━━━━━━━━━━━━━━\n";
 
         $options = [
             'parse_mode' => 'html',
@@ -916,7 +979,7 @@ $mkbot->regex('/^\/see_/', function ($matches) {
             $sapubasah = str_replace('/see_', '', $isipesan);
             $sapulantai = str_replace('0', '-', $sapubasah);
             $sapuujuk = str_replace('11', ' ', $sapulantai);
-            $sapulidi = str_replace('@'.$usernamebot.'', '', $sapuujuk);
+            $sapulidi = str_replace('@' . $usernamebot . '', '', $sapuujuk);
             $API = new routeros_api();
 
             if ($API->connect($mikrotik_ip, $mikrotik_username, $mikrotik_password, $mikrotik_port)) {
@@ -941,21 +1004,21 @@ $mkbot->regex('/^\/see_/', function ($matches) {
                         $loginby = $mangga['login-by'];
                         $comment = $mangga['comment'];
 
-                        $text .= "┏━━━━━━━━ 👤 User Aktif ━━━━━━━━┓\n";
+                        $text .= "┏━━━━ 👤 User Aktif ━━━━\n";
                         $text .= "┃ 🆔 ID        : $id\n";
                         $text .= "┃ 👤 User      : $user\n";
                         $text .= "┃ 🌐 IP        : $address\n";
                         $text .= "┃ ⏱️ Uptime    : $uptime\n";
-                        $text .= "┣━━━━━━━━ Penggunaan Data ━━━━━━━┫\n";
+                        $text .= "┃━━━━━━━━ Penggunaan Data ━━━━━━━\n";
                         $text .= "┃ ⬇️ Byte IN   : $bytesi\n";
                         $text .= "┃ ⬆️ Byte OUT  : $byteso\n";
-                        $text .= "┣━━━━━━━━━━ Info Sesi ━━━━━━━━━━┫\n";
+                        $text .= "┃━━━━━━━━━━ Info Sesi ━━━━━━━━━━\n";
                         $text .= "┃ 🕒 Session   : $usesstime\n";
                         $text .= "┃ 🔐 Login     : $loginby\n";
-                        $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+                        $text .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
                     }
 
-                    $text .= "📊 Total login di $server: ".count($pepaya)." user\n";
+                    $text .= "📊 Total login di $server: " . count($pepaya) . " user\n";
                 }
             } else {
                 $text = '❌ Tidak dapat terhubung dengan Mikrotik. Silakan coba kembali.';
@@ -986,7 +1049,7 @@ $mkbot->regex('/^\/rEm0vid/', function ($matches) {
             $text .= "⛔ Gagal dihapus \n\n<b>KETERANGAN:</b> Tidak Ditemukan ID User";
         } else {
             $id = str_replace('/rEm0vid', '*', $isipesan);
-            $ids = str_replace('@'.$usernamebot, '', $id);
+            $ids = str_replace('@' . $usernamebot, '', $id);
             $API = new routeros_api();
 
             if ($API->connect($mikrotik_ip, $mikrotik_username, $mikrotik_password, $mikrotik_port)) {
@@ -1009,13 +1072,13 @@ $mkbot->regex('/^\/rEm0vid/', function ($matches) {
                     $text .= "⛔ Gagal dihapus \n\n<b>KETERANGAN:</b> $gagal";
                 } else {
                     $text .= "✅ Berhasil Dihapus\n\n";
-                    $text .= "┏━━━━━━━━ 👤 User Info ━━━━━━━━┓\n";
+                    $text .= "┏━━━━ 👤 User Info ━━━━\n";
                     $text .= "┃ 🆔 ID       : $ids\n";
                     $text .= "┃ 🖥️ Server   : $data1\n";
                     $text .= "┃ 👤 Nama     : $data2\n";
                     $text .= "┃ 🔑 Password : $data3\n";
                     $text .= "┃ 👥 Profil   : $data5\n";
-                    $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+                    $text .= "┗━━━━━━━━━━━━━━━━━\n\n";
                     sleep(2);
                     $ARRAY3 = $API->comm('/ip/hotspot/user/print');
                     $jumlah = count($ARRAY3);
@@ -1034,7 +1097,7 @@ $mkbot->regex('/^\/rEm0vid/', function ($matches) {
         Bot::sendMessage($denid, ['parse_mode' => 'html']);
     }
 });
-$mkbot->cmd('!Menu|/Menu|/menu', function () {
+$mkbot->cmd('/voucher/!Voucher|/Voucher|!voucher|/voucer|/vocer', function () {
     $info = bot::message();
     $ids = $info['chat']['id'];
     $msgid = $info['message_id'];
@@ -1045,7 +1108,7 @@ $mkbot->cmd('!Menu|/Menu|/menu', function () {
         include '../config/system.conn.php';
         $data = json_decode($voucher_1, true);
         if (!empty($data)) {
-            $text = "🎫 <b>Menu Voucher</b>\n\n";
+            $text = "🎫 <b>Daftar Voucher</b>\n\n";
             $text .= "<i>Silakan pilih voucher di bawah ini:</i>\n\n";
             $text .= "📋 <b>Daftar Voucher:</b>\n";
 
@@ -1055,9 +1118,9 @@ $mkbot->cmd('!Menu|/Menu|/menu', function () {
             }
 
             for ($i = 0; $i < count($data); ++$i) {
-                ${'database'.$i} = [
+                ${'database' . $i} = [
                     'text' => $data[$i]['Voucher'],
-                    'callback_data' => 'Vcr'.$data[$i]['id'],
+                    'callback_data' => 'Vcr' . $data[$i]['id'],
                 ];
             }
 
@@ -1066,8 +1129,8 @@ $mkbot->cmd('!Menu|/Menu|/menu', function () {
             $vouchernamec2 = array_filter([$database4, $database5]);
 
             $menu_idakhir = [
-               ['text' => '💰 Cek Saldo', 'request_command' => '/ceksaldo'],
-               ['text' => '🔖 Informasi', 'request_command' => '/info'],
+                ['text' => '💰 Cek Saldo', 'request_command' => '/ceksaldo'],
+                ['text' => '🔖 Informasi', 'request_command' => '/info'],
             ];
 
             $send = [
@@ -1078,8 +1141,8 @@ $mkbot->cmd('!Menu|/Menu|/menu', function () {
             ];
 
             $options = [
-               'reply_markup' => json_encode(['inline_keyboard' => $send]),
-               'parse_mode' => 'html',
+                'reply_markup' => json_encode(['inline_keyboard' => $send]),
+                'parse_mode' => 'html',
             ];
 
             Bot::sendMessage($text, $options);
@@ -1093,75 +1156,676 @@ $mkbot->cmd('!Menu|/Menu|/menu', function () {
         Bot::sendMessage($text);
     }
 });
-$mkbot->regex('/^\/see_/', function ($matches) {
-    $info = bot::message();
-    $msgid = $info['message_id'];
-    $nametelegram = $info['from']['username'];
-    $idtelegram = $info['from']['id'];
-    $isipesan = $info['text'];
-    Bot::sendChatAction('typing');
-    include '../config/system.conn.php';
+$mkbot->on('callback', function ($command) {
+    $message           = Bot::message();
+    $id                = $message['from']['id'];
+    $usernamepelanggan = $message['from']['username'];
+    $namatele          = $message['from']['first_name'];
+    $chatidtele        = $message["message"]['chat']['id'];
+    $message_idtele    = $message["message"]["message_id"];
 
-    if ($idtelegram == $id_own) {
-        if ($isipesan == '/see_') {
-            $text = "⚠️ <b>Periksa</b>\n\n<b>KETERANGAN:</b> Tidak Ditemukan";
-        } else {
-            $sapubasah = str_replace('/see_', '', $isipesan);
-            $sapulantai = str_replace('0', '-', $sapubasah);
-            $sapuujuk = str_replace('11', ' ', $sapulantai);
-            $sapulidi = str_replace('@'.$usernamebot.'', '', $sapuujuk);
-            $API = new routeros_api();
+    include('../config/system.conn.php');
 
-            if ($API->connect($mikrotik_ip, $mikrotik_username, $mikrotik_password, $mikrotik_port)) {
-                $pepaya = $API->comm('/ip/hotspot/active/print', ['?server' => $sapulidi]);
+    if (has($id)) {
+        if (strpos($command, 'Vcr') !== false) {
+            $data  = json_decode($voucher_1, true);
+            $cekid = "Vcr" . $data[0]['id'] . ",Vcr" . $data[1]['id'] . ",Vcr" . $data[2]['id'] . ",Vcr" . $data[3]['id'] . ",Vcr" . $data[4]['id'] . ",Vcr" . $data[5]['id'];
 
-                if (empty($pepaya)) {
-                    $text = "⚠️ Tidak ada user aktif di server $sapulidi";
-                } else {
-                    $text = "👥 <b>User Aktif di $sapulidi</b>\n\n";
+            if (preg_match('/' . $command . '/i', $cekid)) {
+                $API = new routeros_api();
 
-                    for ($i = 0; $i < count($pepaya); ++$i) {
-                        $mangga = $pepaya[$i];
-                        $id = $mangga['.id'];
-                        $server = $mangga['server'];
-                        $user = $mangga['user'];
-                        $address = $mangga['address'];
-                        $mac = $mangga['mac-address'];
-                        $uptime = $mangga['uptime'];
-                        $usesstime = $mangga['session-time-left'];
-                        $bytesi = formatBytes($mangga['bytes-in'], 2);
-                        $byteso = formatBytes($mangga['bytes-out'], 2);
-                        $loginby = $mangga['login-by'];
-                        $comment = $mangga['comment'];
+                foreach ($data as $datas => $getdata) {
+                    $getid2         = $getdata['id'];
+                    $princevoc      = $getdata['price'];
+                    $profile        = $getdata['profile'];
+                    $length         = $getdata['length'];
+                    $vouchername    = $getdata['Voucher'];
+                    $markup         = $getdata['markup'];
+                    $server         = $getdata['server'];
+                    $type           = $getdata['type'];
+                    $typechar       = $getdata['typechar'];
+                    $Color          = $getdata['Color'];
+                    $limituptime    = $getdata['Limit'];
+                    $limit_download = toBytes($getdata['limit_download']);
+                    $limit_upload   = toBytes($getdata['limit_upload']);
+                    $limit_total    = toBytes($getdata['limit_total']);
 
-                        $text .= "┏━━━━━━━━ 👤 User Aktif ━━━━━━━━┓\n";
-                        $text .= "┃ 🆔 ID        : $id\n";
-                        $text .= "┃ 👤 User      : $user\n";
-                        $text .= "┃ 🌐 IP        : $address\n";
-                        $text .= "┃ ⏱️ Uptime    : $uptime\n";
-                        $text .= "┣━━━━━━━━ Penggunaan Data ━━━━━━━┫\n";
-                        $text .= "┃ ⬇️ Byte IN   : $bytesi\n";
-                        $text .= "┃ ⬆️ Byte OUT  : $byteso\n";
-                        $text .= "┣━━━━━━━━━━ Info Sesi ━━━━━━━━━━┫\n";
-                        $text .= "┃ 🕒 Session   : $usesstime\n";
-                        $text .= "┃ 🔐 Login     : $loginby\n";
-                        $text .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+                    if ($command == 'Vcr' . $getid2) {
+                        if (sisasaldo($id, $princevoc) == true) {
+                            $limitsaldo = "⚠️ Maaf, saldo Anda tidak mencukupi untuk membeli voucher.\n";
+
+                            $options = [
+                                'chat_id' => $chatidtele,
+                                'message_id' => (int) $message['message']['message_id'],
+                                'text' => $limitsaldo,
+                                'reply_markup' => json_encode([
+                                    'inline_keyboard' => [
+                                        [
+                                            ['text' => '🔙 Back', 'callback_data' => 'Menu'],
+                                        ],
+                                    ]
+                                ]),
+                                'parse_mode' => 'html'
+
+                            ];
+
+                            Bot::editMessageText($options);
+                        } else {
+                            $sendupdate = "";
+                            $sendupdate .= "┏━━━━━━━━━━━━━━━━━━━━━━━━\n";
+                            $sendupdate .= "┃  🎫 Beli Voucher       \n";
+                            $sendupdate .= "┃━━━━━━━━━━━━━━━━━━━━━━━━\n";
+                            $sendupdate .= "┃ 💰 Harga   : " . rupiah($princevoc) . "\n";
+                            $sendupdate .= "┃ 🆔 ID User : $id\n";
+                            $sendupdate .= "┃ 👤 Username: @$usernamepelanggan\n";
+                            $sendupdate .= "┃ ⏳ Status  : Pending   \n";
+                            $sendupdate .= "┗━━━━━━━━━━━━━━━━━━━━━━━━\n";
+                            $sendupdate .= "⏳ Mohon ditunggu, Voucher akan segera dibuat\n";
+
+                            $options = [
+                                'chat_id' => $chatidtele,
+                                'message_id' => (int) $message['message']['message_id'],
+                                'text' => $sendupdate,
+                                'parse_mode' => 'html'
+
+                            ];
+
+                            Bot::editMessageText($options);
+
+                            $delete = [
+                                'chat_id' => $chatidtele,
+                                'message_id' => (int) $message['message']['message_id'],
+                            ];
+                            sleep(1);
+                            Bot::deleteMessage($delete);
+
+                            if ($type == 'up') {
+                                $usernamereal = make_string($length, $typechar);
+                                $passwordreal = make_string($length, $typechar);
+                            } else {
+                                $usernamereal = make_string($length, $typechar);
+                                $passwordreal = $usernamereal;
+                            }
+
+                            switch ($limituptime) {
+                                case null:
+                                    $limituptimereal = '00:00:00';
+                                    break;
+                                case '00:00:00':
+                                    $limituptimereal = '00:00:00';
+                                    break;
+                                default:
+                                    $limituptimereal = $limituptime;
+
+                                    if (strpos(strtolower($limituptimereal), 'h') !== false) {
+                                        $uptime = str_replace('h', ' Jam', $limituptime);
+                                    } elseif (strpos(strtolower($limituptime), 'd') !== false) {
+                                        $uptime = str_replace('d', ' Hari', $limituptime);
+                                    }
+
+                                    $echoexperid .= "<code>  Experid    :</code> <code>{$uptime}</code>\n";
+                                    break;
+                            }
+
+                            if ($API->connect($mikrotik_ip, $mikrotik_username, $mikrotik_password, $mikrotik_port)) {
+                                $add_user_api = $API->comm("/ip/hotspot/user/add", [
+                                    "server" => $server,
+                                    "profile" => $profile,
+                                    "name" => $usernamereal,
+                                    "limit-uptime" => $limituptimereal,
+                                    "limit-bytes-out" => $limit_download,
+                                    "limit-bytes-in" => $limit_upload,
+                                    "limit-bytes-total" => $limit_total,
+                                    "password" => $passwordreal,
+                                    "comment" => "vc-bot|$usernamepelanggan|$princevoc|" . date('d-m-Y'),
+                                ]);
+
+                                if ($type == 'up') {
+                                    $caption = "";
+                                    $caption .= "┏━━━━━━━━━━━━━━━━━\n";
+                                    $caption .= "┃  🎫 Informasi Voucher     \n";
+                                    $caption .= "┃━━━━━━━━━━━━━━━━━\n";
+                                    $caption .= "┃ 🆔 ID       : $add_user_api\n";
+                                    $caption .= "┃ 👤 Username : <code>$usernamereal</code>\n";
+                                    $caption .= "┃ 🔑 Password : <code>$passwordreal</code>\n";
+                                    $caption .= "┃ 📦 Paket    : $profile\n";
+                                    $caption .= $echoexperid;
+                                    $caption .= "┃━━━━━━━━━━━━━━━━━\n";
+                                    $caption .= "┃ 🌐 GUNAKAN INTERNET DGN BIJAK\n";
+                                    $caption .= "┗━━━━━━━━━━━━━━━━━\n";
+                                } else {
+                                    $caption = "";
+                                    $caption .= "┏━━━━━━━━━━━━━━━━━\n";
+                                    $caption .= "┃  🎫 Informasi Voucher     \n";
+                                    $caption .= "┃━━━━━━━━━━━━━━━━━\n";
+                                    $caption .= "┃ 🆔 ID      : $add_user_api\n";
+                                    $caption .= "┃ 🎟️ Voucher : <code>$usernamereal</code>\n";
+                                    $caption .= "┃ 📦 Paket   : $profile\n";
+                                    $caption .= $echoexperid;
+                                    $caption .= "┃━━━━━━━━━━━━━━━━━\n";
+                                    $caption .= "┃ 🌐 GUNAKAN INTERNET DGN BIJAK\n";
+                                    $caption .= "┗━━━━━━━━━━━━━━━━━\n";
+                                }
+
+                                //cek apakah ada kesalahan pada setting voucher.
+                                $cekvalidasiadd = json_encode($add_user_api);
+
+                                if (strpos(strtolower($cekvalidasiadd), '!trap')) {
+                                    //salah maka bot akan dianggap salah
+                                    $ganguan = true;
+                                } else {
+
+                                    //benar maka bot akan send voucher
+
+                                    //cek dnsname sudah ada http belum?
+                                    if (strpos($dnsname, 'http://') !== false) {
+                                        $url = "$dnsname/login?username=$usernamereal&password=$passwordreal";
+                                    } else {
+                                        $url = "http://$dnsname/login?username=$usernamereal&password=$passwordreal";
+                                    }
+
+                                    $qrcode     = 'http://qrickit.com/api/qr.php?d=' . urlencode($url) . '&addtext=' . urlencode($Name_router) . '&txtcolor=000000&fgdcolor=' . $Color . '&bgdcolor=FFFFFF&qrsize=500';
+                                    $keyboard[] = [
+                                        ['text' => 'Login ke WiFi', 'url' => $url],
+                                    ];
+
+                                    $options = [
+                                        'chat_id' => $chatidtele,
+                                        'caption' => $caption,
+                                        'reply_markup' => ['inline_keyboard' => $keyboard],
+                                        'parse_mode' => 'html'
+                                    ];
+                                    $succes = Bot::sendPhoto($qrcode, $options);
+                                }
+
+                                $success = json_decode($succes, true);
+                                if ($success['ok'] !== true) {
+                                    $errorprint = true;
+                                }
+                            } else {
+                                $ganguan = true;
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                if (!empty($ganguan)) {
+                    //remove User jika terjadi error
+                    if ($API->connect($mikrotik_ip, $mikrotik_username, $mikrotik_password, $mikrotik_port)) {
+                        $ARRAY2 = $API->comm("/ip/hotspot/user/remove", ["numbers" => $add_user_api,]);
+                    }
+                    $gagal .= "┏━━━━━━━━━━━━━━━━━\n";
+                    $gagal .= "┃  ❌ Beli Voucher Gagal     \n";
+                    $gagal .= "┃━━━━━━━━━━━━━━━━━\n";
+                    $gagal .= "┃ 💰 Harga    : " . rupiah($princevoc) . "\n";
+                    $gagal .= "┃ 🆔 ID User  : $id\n";
+                    $gagal .= "┃ 👤 Username : @$usernamepelanggan\n";
+                    $gagal .= "┃ ⚠️ Status    : Gagal Koneksi Server\n";
+                    $gagal .= "┃━━━━━━━━━━━━━━━━━\n";
+                    $gagal .= "┃ Maaf, server sedang gangguan\n";
+                    $gagal .= "┃ Silakan hubungi admin.\n";
+                    $gagal .= "┗━━━━━━━━━━━━━━━━━\n";
+                    $options = [
+                        'chat_id' => $chatidtele,
+                        'parse_mode' => 'html'
+
+                    ];
+                    $keterangan = 'gagal';
+                    Bot::sendMessage($gagal, $options);
+
+                    $set = belivoucher($id, $usernamepelanggan, '0', '0', $usernamereal, $passwordreal, $profile, $keterangan);
+                } elseif (!empty($errorprint)) {
+
+                    //remove User jika terjadi error
+                    if ($API->connect($mikrotik_ip, $mikrotik_username, $mikrotik_password, $mikrotik_port)) {
+                        $ARRAY2 = $API->comm("/ip/hotspot/user/remove", ["numbers" => $add_user_api,]);
                     }
 
-                    $text .= "📊 Total login di $server: ".count($pepaya)." user\n";
+                    $gagalprint .= "┏━━━━━━━━━━━━━━━━━\n";
+                    $gagalprint .= "┃  ❌ Beli Voucher Gagal     \n";
+                    $gagalprint .= "┃━━━━━━━━━━━━━━━━━\n";
+                    $gagalprint .= "┃ 💰 Harga    : " . rupiah($princevoc) . "\n";
+                    $gagalprint .= "┃ 🆔 ID User  : $id\n";
+                    $gagalprint .= "┃ 👤 Username : @$usernamepelanggan\n";
+                    $gagalprint .= "┃ ⚠️ Status    : Gagal Cetak Voucher\n";
+                    $gagalprint .= "┃━━━━━━━━━━━━━━━━━\n";
+                    $gagalprint .= "┃ Maaf, server sedang gangguan\n";
+                    $gagalprint .= "┃ Silakan hubungi admin.\n";
+                    $gagalprint .= "┗━━━━━━━━━━━━━━━━━\n";
+                    $options    = ['chat_id' => $chatidtele, 'parse_mode' => 'html'];
+                    $keterangan = 'gagalprint';
+                    Bot::sendMessage($gagalprint, $options);
+
+                    $set = belivoucher($id, $usernamepelanggan, '0', '0', $usernamereal, $passwordreal, $profile, $keterangan);
+                } else if (!empty($succes)) {
+
+                    $Success = "";
+                    $Success .= "┏━━━━━━━━━━━━━━━━━\n";
+                    $Success .= "┃  ✅ Beli Voucher Berhasil  \n";
+                    $Success .= "┃━━━━━━━━━━━━━━━━━\n";
+                    $Success .= "┃ 💰 Harga    : " . rupiah($princevoc) . "\n";
+                    $Success .= "┃ 🆔 ID User  : $id\n";
+                    $Success .= "┃ 👤 Username : @$usernamepelanggan\n";
+                    $Success .= "┃ ✅ Status   : Berhasil\n";
+                    $Success .= "┗━━━━━━━━━━━━━━━━━\n";
+
+                    if (isset($Success)) {
+                        $saldoawal   = lihatsaldo($id);
+                        $keterangan  = 'Success';
+                        $markupakhir = minus($princevoc, $markup);
+                        $set         = belivoucher($id, $usernamepelanggan, $markupakhir, $markup, $usernamereal, $passwordreal, $profile, $keterangan);
+                        $angka       = lihatsaldo($id);
+                        $options     = [
+                            'chat_id' => $chatidtele,
+                            'reply_markup' => json_encode([
+                                'inline_keyboard' => [
+                                    [
+                                        ['text' => '⏱ History', 'callback_data' => 'VMarkup|' . $princevoc . '|' . $markup . '|' . $markupakhir . '|' . $saldoawal . '|' . $angka . ''],
+                                        ['text' => '🔙 Back', 'callback_data' => 'Menu'],
+                                    ], [
+                                        ['text' => '💰 Cek Saldo', 'request_command' => '/ceksaldo'],
+                                    ]
+                                ]
+                            ]),
+                            'parse_mode' => 'html'
+
+                        ];
+
+                        Bot::sendMessage($Success, $options);
+                    }
                 }
             } else {
-                $text = '❌ Tidak dapat terhubung dengan Mikrotik. Silakan coba kembali.';
-            }
-        }
+                $Success = "";
+                $Success .= "┏━━━━━━━━━━━━━━━━━\n";
+                $Success .= "┃  ⚠️ Voucher Tidak Tersedia \n";
+                $Success .= "┃━━━━━━━━━━━━━━━━━\n";
+                $Success .= "┃ Maaf, voucher ini tidak    \n";
+                $Success .= "┃ lagi tersedia.             \n";
+                $Success .= "┃                            \n";
+                $Success .= "┃ Silakan pilih voucher lain \n";
+                $Success .= "┃ atau hubungi admin.        \n";
+                $Success .= "┗━━━━━━━━━━━━━━━━━\n";
 
-        $options = [
-            'parse_mode' => 'html',
-        ];
-        Bot::sendMessage($text, $options);
+                $options = [
+                    'chat_id' => $chatidtele,
+                    'parse_mode' => 'html'
+
+                ];
+
+                Bot::sendMessage($Success, $options);
+            }
+        } elseif ($command == 'Menu') {
+            $text = "";
+            $data = json_decode($voucher_1, true);
+            $text  = "┏━━━━━━━━━━━━━━━━━\n";
+            $text .= "┃  🎫 Daftar Voucher         \n";
+            $text .= "┃━━━━━━━━━━━━━━━━━\n";
+            $text .= "┃ Silakan pilih voucher:     \n";
+            $text .= "┃                            \n";
+            $data = json_decode($voucher_1, true);
+            foreach ($data as $hargas) {
+                $textlist = $hargas['Text_List'];
+                $text .= "┃ • $textlist\n";
+            }
+            $text .= "┗━━━━━━━━━━━━━━━━━\n";
+
+            $datavoc = json_decode($voucher_1, true);
+            for ($i = 0; $i < count($datavoc); $i++) {
+                ${'database' . $i}
+
+                    = ['text' => $datavoc[$i]['Voucher'] . '', 'callback_data' => 'Vcr' . $datavoc[$i]['id'] . ''];
+            }
+
+            $vouchernamea0 = array_filter(
+                [
+                    $database0,
+                    $database1
+
+                ]
+            );
+
+            $vouchernameb1 = array_filter(
+                [
+                    $database2,
+                    $database3
+
+                ]
+            );
+
+            $vouchernamec2 = array_filter(
+                [
+                    $database4,
+                    $database5
+
+                ]
+            );
+
+            $menu_idakhir = [
+                ['text' => '💰 Cek Saldo', 'callback_data' => 'ceksaldo'],
+                ['text' => '🔖 iNFORMASI', 'callback_data' => 'informasi'],
+            ];
+            $send = [];
+            array_push($send, $vouchernamea0);
+            array_push($send, $vouchernameb1);
+            array_push($send, $vouchernamec2);
+            array_push($send, $menu_idakhir);
+
+            $options = [
+                'chat_id' => $chatidtele,
+                'message_id' => (int) $message['message']['message_id'],
+                'text' => $text,
+                'reply_markup' => json_encode(['inline_keyboard' => $send]),
+                'parse_mode' => 'html'
+
+            ];
+
+            Bot::editMessageText($options);
+        } elseif ($command == 'ceksaldo') {
+
+            if (has($id) == false) {
+                $text = "┏━━━━━━━━━━━━━━━━━\n";
+                $text .= "┃  ⚠️ Pengguna Tidak Terdaftar\n";
+                $text .= "┃━━━━━━━━━━━━━━━━━\n";
+                $text .= "┃ Anda belum terdaftar.      \n";
+                $text .= "┃ Silakan daftar ke admin    \n";
+                $text .= "┃ atau klik /daftar          \n";
+                $text .= "┗━━━━━━━━━━━━━━━━━\n";
+            } else {
+                $angka = lihatsaldo($id);
+                $text = "┏━━━━━━━━━━━━━━━━━\n";
+                $text .= "┃  💰 Informasi Saldo        \n";
+                $text .= "┃━━━━━━━━━━━━━━━━━\n";
+                $text .= "┃ 🆔 ID User : $id\n";
+                $text .= "┃ 👤 Nama    : @$usernamepelanggan\n";
+                $text .= "┃ 💵 Saldo   : " . rupiah($angka) . "\n";
+                $text .= "┗━━━━━━━━━━━━━━━━━\n";
+            }
+
+            $options = [
+                'chat_id' => $chatidtele,
+                'message_id' => (int) $message['message']['message_id'],
+                'text' => $text,
+                'reply_markup' => json_encode([
+                    'inline_keyboard' => [
+                        [
+                            ['text' => '🔙 Back', 'callback_data' => 'Menu'],
+                        ],
+                    ]
+                ]),
+                'parse_mode' => 'html'
+
+            ];
+
+            Bot::editMessageText($options);
+        } elseif ($command == 'informasi') {
+            $text  = "┏━━━━━━━━━━━━━━━━━\n";
+            $text .= "┃  ℹ️ Informasi               \n";
+            $text .= "┃━━━━━━━━━━━━━━━━━\n";
+            $text .= "┃ Tidak ada informasi terkini\n";
+            $text .= "┗━━━━━━━━━━━━━━━━━\n";
+            $options = [
+                'chat_id' => $chatidtele,
+                'message_id' => (int) $message['message']['message_id'],
+                'text' => $text,
+                'reply_markup' => json_encode([
+                    'inline_keyboard' => [
+                        [
+                            ['text' => 'Back', 'callback_data' => 'Menu'],
+                        ],
+                    ]
+                ]),
+                'parse_mode' => 'html'
+
+            ];
+
+            Bot::editMessageText($options);
+        } elseif (strpos($command, 'tps') !== false) {
+            if (preg_match('/^tps/', $command)) {
+                $cekdata  = explode('|', $command);
+                $cek      = $cekdata[1];
+                $text  = "┏━━━━ 💰 Permintaan Deposit ━━━━\n";
+                $text .= "┃ ✅ Diterima dari: @$usernamepelanggan\n";
+                $text .= "┃ 💵 Jumlah: " . rupiah($cek) . "\n";
+                $text .= "┃━━━━━━━━━━━━━━━━━━\n";
+                $text .= "┃ 📸 Kirim bukti pembayaran:\n";
+                $text .= "┃ <code>#konfirmasi deposit $cek</code>\n";
+                $text .= "┃━━━━━━━━━━━━━━━━━━\n";
+                $text .= "┃ ⏳ Harap konfirmasi dalam 2 jam\n";
+                $text .= "┗━━━━━━━━━━━━━━━━━━\n";
+                $text .= "Terima kasih! 🙏";
+                $options = [
+                    'chat_id' => $chatidtele,
+                    'message_id' => (int) $message['message']['message_id'],
+                    'text' => $text,
+                    'parse_mode' => 'html'
+
+                ];
+
+                Bot::editMessageText($options);
+
+                $textsend = "";
+                $textsend .= "┏━━━━ 🌟 Permintaan Deposit ━━━━\n";
+                $textsend .= "┃ 👤 User     : @$usernamepelanggan\n";
+                $textsend .= "┃ 🆔 ID       : <code>$id</code>\n";
+                $textsend .= "┃ 💰 Nominal  : " . rupiah($cek) . "\n";
+                $textsend .= "┃━━━━━━━━━━━━━━━━━━\n";
+                $textsend .= "┃ 🔔 Tindak Lanjut:\n";
+                $textsend .= "┃ • Hubungi user @$usernamepelanggan\n";
+                $textsend .= "┃ • Atau gunakan tombol di bawah\n";
+                $textsend .= "┃   untuk mengisi saldo otomatis\n";
+                $textsend .= "┗━━━━━━━━━━━━━━━━━━\n";
+                $textsend .= "Dengan menekan tombol di bawah ini, saldo user akan otomatis terisi.";
+
+                $kirimpelangan = [
+                    'chat_id' => $id_own,
+                    'reply_markup' => json_encode([
+                        'inline_keyboard' => [
+                            [
+                                ['text' => 'QUICK TOP UP', 'callback_data' => '12'],
+                            ],
+                            [
+                                ['text' => '' . rupiah($cek) . '', 'callback_data' => 'tp|' . $cek . '|' . $id . '|' . $usernamepelanggan . ''],
+                            ],
+                            [
+                                ['text' => 'OR COSTUM', 'callback_data' => '12'],
+                            ],
+                            [
+                                ['text' => '10000', 'callback_data' => 'tp|10000|' . $id . '|' . $usernamepelanggan . ''],
+                                ['text' => '15000', 'callback_data' => 'tp|15000|' . $id . '|' . $usernamepelanggan . ''],
+                                ['text' => '20000', 'callback_data' => 'tp|20000|' . $id . '|' . $usernamepelanggan . ''],
+                            ],
+                            [
+
+                                ['text' => '25000', 'callback_data' => 'tp|25000|' . $id . '|' . $usernamepelanggan . ''],
+                                ['text' => '30000', 'callback_data' => 'tp|30000|' . $id . '|' . $usernamepelanggan . ''],
+                                ['text' => '50000', 'callback_data' => 'tp|50000|' . $id . '|' . $usernamepelanggan . ''],
+                            ],
+                            [
+
+                                ['text' => '100000', 'callback_data' => 'tp|100000|' . $id . '|' . $usernamepelanggan . ''],
+                                ['text' => '150000', 'callback_data' => 'tp|150000|' . $id . '|' . $usernamepelanggan . ''],
+                                ['text' => '200000', 'callback_data' => 'tp|200000|' . $id . '|' . $usernamepelanggan . ''],
+                            ],
+                            [
+
+                                ['text' => 'Reject Request', 'callback_data' => 'tp|reject|' . $id . '|reject']
+                            ],
+
+                        ]
+                    ]),
+                    'parse_mode' => 'html'
+
+                ];
+
+                Bot::sendMessage($textsend, $kirimpelangan);
+            }
+        } elseif (strpos($command, 'tp') !== false) {
+
+            if (preg_match('/^tp/', $command)) {
+                $cekdata     = explode('|', $command);
+                $cekkodeunik = $cekdata[0];
+                $jumlah      = $cekdata[1];
+                $iduser      = $cekdata[2];
+                $namauser    = $cekdata[3];
+                $text        = "";
+                if ($jumlah == 'reject') {
+                    $text = "⚠️ <b>Permintaan Deposit Kadaluarsa</b>\n\n";
+                    $text .= "┏━━━━ ⏳ Informasi ━━━━\n";
+                    $text .= "┃ • Masa tunggu konfirmasi telah habis\n";
+                    $text .= "┃ • Permintaan deposit Anda kadaluarsa\n";
+                    $text .= "┃━━━━ 📝 Petunjuk ━━━━\n";
+                    $text .= "┃ Harap konfirmasi deposit maksimal\n";
+                    $text .= "┃ 2 jam setelah permintaan deposit\n";
+                    $text .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
+                    $text .= "Terima kasih atas pengertian Anda. 🙏";
+                    //kirim ke user
+                    $kirimpelangan = [
+                        'chat_id' => $iduser,
+                        'parse_mode' => 'html'
+
+                    ];
+                    Bot::sendMessage($text, $kirimpelangan);
+                } else {
+
+                    if ($id == $id_own) {
+                        if (!empty($iduser) && !empty($jumlah)) {
+                            if (has($iduser) == false) {
+                                $text = "❌ <b>Data Tidak Ditemukan</b>\n\n";
+                                $text .= "┏━━━━ ℹ️ Informasi ━━━━\n";
+                                $text .= "┃ 🆔 ID: <code>$iduser</code>\n";
+                                $text .= "┃ 📃 Status: Tidak terdaftar\n";
+                                $text .= "┃━━━━ 🔍 Saran ━━━━\n";
+                                $text .= "┃ • Periksa kembali ID yang dimasukkan\n";
+                                $text .= "┃ • Pastikan pengguna sudah terdaftar\n";
+                                $text .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
+                                $text .= "Jika masalah berlanjut, hubungi admin. 🙏";
+                            } else {
+
+                                if (preg_match('/^[0-9]+$/', $jumlah)) {
+                                    if (strlen($jumlah) < 7) {
+                                        $text = topupresseller($iduser, $namauser, $jumlah, $id_own);
+
+                                        //kirim ke user
+                                        $kirimpelangan = [
+                                            'chat_id' => $iduser,
+                                            'reply_markup' => json_encode([
+                                                'inline_keyboard' => [
+                                                    [
+                                                        ['text' => '🔎 Beli Voucher', 'callback_data' => 'Voucher'],
+                                                        ['text' => '📛 Promo Hot', 'callback_data' => 'informasi'],
+                                                    ],
+                                                ]
+                                            ]),
+                                            'parse_mode' => 'html'
+                                        ];
+                                        Bot::sendMessage($text, $kirimpelangan);
+                                        //
+                                    } else {
+                                        $text = "⚠️ <b>Batas Maksimal Top Up</b>\n\n";
+                                        $text .= "Maaf, maksimal top up adalah Rp 1.000.000,00\n";
+                                        $text .= "Silakan masukkan jumlah yang lebih kecil.";
+                                    }
+                                } else {
+                                    $text = "❌ <b>Format Nominal Salah</b>\n\n";
+                                    $text .= "Maaf, nominal harus berupa angka.\n";
+                                    $text .= "Contoh: 50000 (tanpa titik atau koma)";
+                                }
+                            }
+                        } else {
+                            $text = "❗ <b>Format Data Salah</b>\n\n";
+                            $text .= "Maaf, format data yang Anda masukkan salah.\n";
+                            $text .= "Silakan periksa kembali dan coba lagi.";
+                        }
+                    } else {
+                        $text = "🚫 <b>Akses Ditolak</b>\n\n";
+                        $text .= "Maaf, akses hanya untuk Administrator.\n";
+                        $text .= "Silakan hubungi admin jika Anda memerlukan bantuan.";
+                    }
+                    $options = [
+                        'chat_id' => $chatidtele,
+                        'message_id' => (int) $message['message']['message_id'],
+                        'text' => $text,
+                        'parse_mode' => 'html'
+                    ];
+                    Bot::editMessageText($options);
+                }
+            }
+        } elseif (strpos($command, 'VMarkup') !== false) {
+            $cekdata     = explode('|', $command);
+            $cekkodeunik = $cekdata[0];
+            $princevoc   = $cekdata[1];
+            $markup      = $cekdata[2];
+            $markupakhir = $cekdata[3];
+            $saldoawal   = $cekdata[4];
+            $saldo       = $cekdata[5];
+            $text        = "";
+
+            if (!empty($princevoc)) {
+                $text = "📊 <b>Laporan Transaksi</b>\n\n";
+                $text .= "┏━━━━ 💰 Rincian Saldo ━━━━\n";
+                $text .= "┃ 💵 Saldo Awal   : " . rupiah($saldoawal) . "\n";
+                $text .= "┃ 🎟️ Harga Voucher : " . rupiah($princevoc) . "\n";
+                $text .= "┃ 📈 Total Markup  : " . rupiah($markup) . "\n";
+                $text .= "┃━━━━ 🧮 Perhitungan ━━━━\n";
+                $text .= "┃ Voucher - Markup:\n";
+                $text .= "┃ " . rupiah($princevoc) . " - " . rupiah($markup) . " = " . rupiah($markupakhir) . "\n";
+                $text .= "┃ Saldo Awal - Markup Akhir:\n";
+                $text .= "┃ " . rupiah($saldoawal) . " - " . rupiah($markupakhir) . " = " . rupiah($saldo) . "\n";
+                $text .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
+                $text .= "💰 <b>Sisa Saldo</b>: " . rupiah($saldo);
+            } else {
+                $text = "❌ <b>Format Data Salah</b>\n\n";
+                $text .= "Maaf, format data yang Anda masukkan tidak valid.\n";
+                $text .= "Silakan periksa kembali dan coba lagi.";
+            }
+
+            $options = [
+                'chat_id' => $chatidtele,
+                'message_id' => (int) $message['message']['message_id'],
+                'text' => $text,
+                'reply_markup' => json_encode([
+                    'inline_keyboard' => [
+                        [
+                            ['text' => '🔙 Back', 'callback_data' => 'Menu'],
+                        ],
+                    ]
+                ]),
+                'parse_mode' => 'html'
+
+            ];
+
+            Bot::editMessageText($options);
+        } elseif (strpos($command, 'notifsaldo') !== false) {
+
+            if (has($id) == false) {
+                $text = "⚠️ Anda belum terdaftar\n\n";
+                $text .= "Silakan daftar terlebih dahulu ke admin atau klik /daftar";
+            } else {
+                $angka = lihatsaldo($id);
+                $text = "┏━━━━ 💰 Informasi Saldo ━━━━\n";
+                $text .= "┃ 🆔 ID Anda   : $id\n";
+                $text .= "┃ 💵 Sisa Saldo : " . rupiah($angka) . "\n";
+                if ($angka < 3000) {
+                    $text .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
+                    $text .= "⚠️ Peringatan: Saldo Anda rendah!\n";
+                    $text .= "Silahkan isi ulang saldo Anda.";
+                } else {
+                    $text .= "┗━━━━━━━━━━━━━━━━━━━━";
+                }
+            }
+            Bot::answerCallbackQuery($text, $options = ['show_alert' => true]);
+        }
     } else {
-        $denid = '🚫 Maaf! Akses hanya untuk Administrator';
-        Bot::sendMessage($denid, ['parse_mode' => 'html']);
+        $text = "🚫 Anda belum terdaftar\n\n";
+        $text .= "Silakan daftar terlebih dahulu ke admin atau klik /daftar";
+        $options = [
+            'chat_id' => $chatidtele,
+            'message_id' => (int) $message['message']['message_id'],
+            'text' => $text,
+        ];
+        Bot::editMessageText($options);
     }
 });
 $mkbot->on('photo', function () {
@@ -1186,10 +1850,10 @@ $mkbot->on('photo', function () {
                         $fotojelek = $info['photo'][0]['file_id'] ?? null;
 
                         $caption = "💰 <b>Konfirmasi Deposit</b>\n\n";
-                        $caption .= "┏━━━━━━━━ 📌 Detail ━━━━━━━━┓\n";
+                        $caption .= "┏━━━━ 📌 Detail ━━━━\n";
                         $caption .= "┃ 👤 Pengirim : @$nametelegram\n";
-                        $caption .= '┃ 💵 Jumlah   : '.rupiah($jumlahtext)."\n";
-                        $caption .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n";
+                        $caption .= '┃ 💵 Jumlah   : ' . rupiah($jumlahtext) . "\n";
+                        $caption .= "┗━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
                         $caption .= '🔍 Silakan periksa dan tindak lanjuti.';
 
                         $options = [
@@ -1200,14 +1864,43 @@ $mkbot->on('photo', function () {
 
                         if (!empty($fototerbaik)) {
                             Bot::sendPhoto($fototerbaik, $options);
-                            $response = "✅ Konfirmasi deposit telah kami terima dan akan segera kami proses.\n\n⏳ Mohon tunggu.\n\nTerima kasih! 🙏";
+                            $response = "✅ <b>Konfirmasi Deposit Diterima</b>\n\n";
+                            $response .= "┏━━━━ ℹ️ Informasi ━━━━\n";
+                            $response .= "┃ • Konfirmasi telah kami terima\n";
+                            $response .= "┃ • Deposit akan segera diproses\n";
+                            $response .= "┃━━━━ ⏳ Status ━━━━\n";
+                            $response .= "┃ Mohon tunggu proses verifikasi\n";
+                            $response .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
+                            $response .= "Terima kasih atas kesabaran Anda! 🙏";
                         } elseif (!empty($fotomedium)) {
                             Bot::sendPhoto($fotomedium, $options);
-                            $response = "✅ Konfirmasi deposit telah kami terima dan akan segera kami proses.\n\n⏳ Mohon tunggu.\n\nTerima kasih! 🙏";
+                            $response = "✅ <b>Konfirmasi Deposit Diterima</b>\n\n";
+                            $response .= "┏━━━━ ℹ️ Informasi ━━━━\n";
+                            $response .= "┃ • Konfirmasi telah kami terima\n";
+                            $response .= "┃ • Deposit akan segera diproses\n";
+                            $response .= "┃━━━━ ⏳ Status ━━━━\n";
+                            $response .= "┃ Mohon tunggu proses verifikasi\n";
+                            $response .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
+                            $response .= "Terima kasih atas kesabaran Anda! 🙏";
                         } elseif (!empty($fotorendah) || !empty($fotojelek)) {
-                            $response = "⚠️ Maaf, foto Anda kurang jelas. Sistem kami tidak dapat membaca foto tersebut.\n\n📸 Mohon kirim ulang dengan foto yang lebih jelas.";
+                            $response = "⚠️ <b>Foto Kurang Jelas</b>\n\n";
+                            $response .= "┏━━━━ 📸 Informasi ━━━━\n";
+                            $response .= "┃ Sistem tidak dapat membaca foto\n";
+                            $response .= "┃━━━━ 🔄 Tindak Lanjut ━━━━\n";
+                            $response .= "┃ Mohon kirim ulang dengan foto yang:\n";
+                            $response .= "┃ • Lebih jelas\n";
+                            $response .= "┃ • Tidak blur atau buram\n";
+                            $response .= "┃ • Menampilkan seluruh bukti transfer\n";
+                            $response .= "┗━━━━━━━━━━━━━━━━━━━━";
                         } else {
-                            $response = '❌ Terjadi kesalahan. Mohon coba lagi nanti.';
+                            $response = "⚠️ <b>Format Jumlah Deposit Salah</b>\n\n";
+                            $response .= "┏━━━━ ℹ️ Informasi ━━━━\n";
+                            $response .= "┃ Jumlah deposit harus berupa angka\n";
+                            $response .= "┃━━━━ 📝 Contoh Benar ━━━━\n";
+                            $response .= "┃ <code>#konfirmasi deposit 50000</code>\n";
+                            $response .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
+                            $response .= "Silakan kirim ulang dengan format yang benar.";
+                            Bot::sendMessage($response, ['parse_mode' => 'html']);
                         }
 
                         Bot::sendMessage($response, ['parse_mode' => 'html']);
@@ -1216,15 +1909,26 @@ $mkbot->on('photo', function () {
                     }
                 } else {
                     $response = "ℹ️ <b>Panduan Konfirmasi Deposit</b>\n\n";
-                    $response .= "Untuk melakukan konfirmasi deposit, silakan kirim foto bukti transfer dengan keterangan sebagai berikut:\n\n";
-                    $response .= "<code>#konfirmasi deposit [jumlah]</code>\n\n";
-                    $response .= 'Contoh: <code>#konfirmasi deposit 50000</code>';
+                    $response .= "┏━━━━ 📝 Instruksi ━━━━\n";
+                    $response .= "┃ Untuk konfirmasi deposit:\n";
+                    $response .= "┃ 1. Kirim foto bukti transfer\n";
+                    $response .= "┃ 2. Tambahkan keterangan:\n";
+                    $response .= "┃    <code>#konfirmasi deposit [jumlah]</code>\n";
+                    $response .= "┃━━━━ 🔍 Contoh ━━━━\n";
+                    $response .= "┃ <code>#konfirmasi deposit 50000</code>\n";
+                    $response .= "┗━━━━━━━━━━━━━━━━━━━━\n\n";
+                    $response .= "📸 Pastikan foto jelas dan nominal sesuai.";
                     Bot::sendMessage($response, ['parse_mode' => 'html']);
                 }
             }
         } else {
-            $response = "⚠️ Maaf, Anda belum terdaftar.\n\n";
-            $response .= 'Silakan daftar terlebih dahulu ke admin atau klik /daftar';
+            $response = "⚠️ <b>Akun Belum Terdaftar</b>\n\n";
+            $response .= "┏━━━━ ℹ️ Informasi ━━━━\n";
+            $response .= "┃ Anda belum terdaftar di sistem.\n";
+            $response .= "┃━━━━ 📝 Petunjuk ━━━━\n";
+            $response .= "┃ • Hubungi admin untuk mendaftar\n";
+            $response .= "┃ • atau klik /daftar untuk registrasi\n";
+            $response .= "┗━━━━━━━━━━━━━━━━━━━━";
             Bot::sendMessage($response, ['parse_mode' => 'html']);
         }
     }
@@ -1295,7 +1999,7 @@ Version update 1.3.00
 
 -Version update 1.5.00
 
-#25 Juli 2024 : HexSorcerer
+#25 dan 26 Juli 2024 : HexSorcerer
 - pergantian string (dengan icon)
 
 Thanks to topupGroup an member , SengkuniCode, and to all user support mini project
