@@ -45,7 +45,7 @@ function IP()
 }
 
 $ip = IP();
-var_dump($ip);
+
 if (isset($_POST)) {
     $user = $_POST['username'];
     $pass = $_POST['password'];
