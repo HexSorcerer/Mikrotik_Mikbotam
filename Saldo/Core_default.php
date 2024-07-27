@@ -309,6 +309,7 @@ $mkbot->cmd('/help|!Help', function ($id, $name, $notlp, $saldo) {
         $text .= "┃ 📉 /topdown  - Kurangi Saldo User\n";
         $text .= "┃ 💸 /topup    - Tambah Saldo User\n";
         $text .= "┃ 🌐 /hotspot  - Monitor Hotspot\n";
+        $text .= "┃ 🔌 /ppp      - Monitor PPP\n";
         $text .= "┃ 📡 /resource - Resource Router\n";
         $text .= "┃ 👁️ /netwatch - Netwatch Router\n";
         $text .= "┃ 📊 /report   - Laporan Mikhbotam\n";
@@ -692,7 +693,7 @@ $mkbot->cmd('!Hotspot|?hotspot|/hotspot|/Hotspot|!Hotspot', function ($user, $te
 
                 $text .= '┗━━━━━━━━━━━━━━━━━━━━━';
 
-                $keyboard = [['!Hotspot user', '!Hotspot aktif'], ['!Menu', '!Help'], ['!Hide']];
+                $keyboard = [['!Hotspot user', '!Hotspot aktif'], ['!Menu', '!Help'], ['!PPP']];
                 $replyMarkup = ['keyboard' => $keyboard, 'resize_keyboard' => true, 'one_time_keyboard' => true, 'selective' => true];
                 $options = [
                     'reply' => true,
@@ -713,6 +714,62 @@ $mkbot->cmd('!Hotspot|?hotspot|/hotspot|/Hotspot|!Hotspot', function ($user, $te
         Bot::sendMessage($denid);
     }
 });
+// PPP monitor commands khusus Administrator
+$mkbot->cmd('/ppp', function () {
+    include '../config/system.conn.php';
+    $info = bot::message();
+    $idtelegram = $info['from']['id'];
+    $chatidtele = $info['chat']['id'];
+
+    try {
+        if ($idtelegram == $id_own) {
+            $API = new routeros_api();
+
+            if ($API->connect($mikrotik_ip, $mikrotik_username, $mikrotik_password, $mikrotik_port)) {
+                $pppUsers = $API->comm('/ppp/active/print');
+
+                $text = "📋 <b>Daftar User PPP Aktif</b>\n";
+                $text .= "┏━━━━━━━━━━━━━━━━━━━━━\n";
+
+                foreach ($pppUsers as $user) {
+                    $address = $user['address'];
+                    $bytesIn = $user['bytes-in'];
+                    $bytesOut = $user['bytes-out'];
+                    $name = $user['name'];
+                    $service = $user['service'];
+                    $sessionId = $user['session-id'];
+                    $uptime = $user['uptime'];
+
+                    // Query terpisah untuk mendapatkan profile
+                    $profileData = $API->comm('/ppp/secret/print', [
+                       '?name' => $name,
+                    ]);
+                    $profile = $profileData[0]['profile'] ?? 'N/A';
+
+                    $text .= "┃ 🌐 <b>IP Address:</b> $address\n";
+                    $text .= "┃ 👤 <b>Nama:</b> $name\n";
+                    $text .= "┃ 📦 <b>Paket:</b> $profile\n";
+                    $text .= "┃ 🛠️ <b>Layanan:</b> $service\n";
+                    $text .= "┃ 🆔 <b>ID Sesi:</b> $sessionId\n";
+                    $text .= '┃ ⏱️ <b>Waktu Aktif:</b> '.formatDTM($uptime)."\n";
+                    $text .= "┗━━━━━━━━━━━━━━━━━━━━━\n";
+                }
+
+                $options = [
+                    'parse_mode' => 'html',
+                ];
+                Bot::sendMessage($text, $options);
+            } else {
+                Bot::sendMessage('❌ Tidak dapat terhubung dengan Mikrotik. Silakan coba kembali.');
+            }
+        } else {
+            Bot::sendMessage('🚫 Maaf! Akses hanya untuk Administrator');
+        }
+    } catch (Exception $e) {
+        $text = '❌ Error: '.$e->getMessage();
+        Bot::sendMessage($text);
+    }
+});
 // User commands khusus Administator
 $mkbot->cmd('?hs|/user|/User|!User|?user|!user|', function ($name) {
     $info = bot::message();
@@ -731,7 +788,7 @@ $mkbot->cmd('?hs|/user|/User|!User|?user|!user|', function ($name) {
             $get = $API->comm('/system/scheduler/print', ['?name' => $name]);
 
             if (empty($ARRAY)) {
-                $texta = '❌ User tidak ditemukan...\nUntuk mencari rincian user silahkan ketik /user username';
+                $texta = '❌ User tidak ditemukan...Untuk mencari rincian user silahkan ketik /user username';
             } else {
                 foreach ($ARRAY as $index => $baris) {
                     $text = '';

@@ -309,7 +309,7 @@ $mkbot->cmd('/help|!Help', function ($id, $name, $notlp, $saldo) {
         $text .= "┃ 📉 /topdown  - Kurangi Saldo User\n";
         $text .= "┃ 💸 /topup    - Tambah Saldo User\n";
         $text .= "┃ 🌐 /hotspot  - Monitor Hotspot\n";
-        $text .= "┃ 🖧 /ppp      - Monitor PPP\n";
+        $text .= "┃ 🔌 /ppp      - Monitor PPP\n";
         $text .= "┃ 📡 /resource - Resource Router\n";
         $text .= "┃ 👁️ /netwatch - Netwatch Router\n";
         $text .= "┃ 📊 /report   - Laporan Mikhbotam\n";
@@ -693,7 +693,7 @@ $mkbot->cmd('!Hotspot|?hotspot|/hotspot|/Hotspot|!Hotspot', function ($user, $te
 
                 $text .= '┗━━━━━━━━━━━━━━━━━━━━━';
 
-                $keyboard = [['!Hotspot user', '!Hotspot aktif'], ['!Menu', '!Help'], ['!Hide']];
+                $keyboard = [['!Hotspot user', '!Hotspot aktif'], ['!Menu', '!Help'], ['!PPP']];
                 $replyMarkup = ['keyboard' => $keyboard, 'resize_keyboard' => true, 'one_time_keyboard' => true, 'selective' => true];
                 $options = [
                     'reply' => true,
