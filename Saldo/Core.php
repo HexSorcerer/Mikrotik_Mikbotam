@@ -310,6 +310,7 @@ $mkbot->cmd('/help|!Help', function ($id, $name, $notlp, $saldo) {
         $text .= "┃ 💸 /topup    - Tambah Saldo User\n";
         $text .= "┃ 🌐 /hotspot  - Monitor Hotspot\n";
         $text .= "┃ 🔌 /ppp      - Monitor PPP\n";
+        $text .= "┃ 🧩 /ont      - Monitor ONT\n";
         $text .= "┃ 📡 /resource - Resource Router\n";
         $text .= "┃ 👁️ /netwatch - Netwatch Router\n";
         $text .= "┃ 📊 /report   - Laporan Mikhbotam\n";
@@ -770,6 +771,55 @@ $mkbot->cmd('/ppp', function () {
         Bot::sendMessage($text);
     }
 });
+// ONT monitor commands khusus Administrator
+$mkbot->cmd('/ont', function () {
+    include '../config/system.conn.php';
+    include '../Api/olt.php';
+
+    $info = bot::message();
+    $idtelegram = $info['from']['id'];
+    $chatidtele = $info['chat']['id'];
+
+    // Pertama, periksa apakah pengguna adalah administrator
+    if ($idtelegram != $id_own) {
+        return Bot::sendMessage('🚫 Maaf! Akses hanya untuk Administrator');
+    }
+    try {
+        // Ambil data akses
+        $json_data = getInfoOnt();
+        $akses = json_decode($json_data, true); // Konversi JSON ke array asosiatif
+        
+        if (!$akses['success']) {
+            return Bot::sendMessage('🚫 ' . $akses['pesan']);
+        }
+        if (!isset($akses['data']['data'])) {
+            return Bot::sendMessage('🚫 Maaf! Sepertinya akses API bermasalah!');
+        }
+        // Kirim daftar ont
+        $text = "📋 <b>Monitoring ONT</b>\n";
+        $text .= "┏━━━━━━━━━━━━━━━━━━━━━\n";
+        foreach ($akses['data']['data'] as $ont) {
+            $text .= "┃ 🏷️ <b>ONT Name:</b> " . htmlspecialchars($ont['ont_name']) . "\n";
+            $text .= "┃ 🔢 <b>Serial Number:</b> " . htmlspecialchars($ont['ont_sn']) . "\n";
+            $text .= "┃ 🔧 <b>Dev Type:</b> " . htmlspecialchars($ont['dev_type']) . "\n";
+            $text .= "┃ ⚡ <b>Receive Power:</b> " . htmlspecialchars($ont['receive_power']) . "\n";
+            $text .= '┃ 🔄 <b>Last Uptime:</b> ' . formatDTM($ont['last_u_time']) . "\n";
+            $text .= '┃ 📉 <b>Last Downtime:</b> ' . formatDTM($ont['last_d_time']) . "\n";
+            $text .= '┃ 🛑 <b>Last Downtime Cause:</b> ' . htmlspecialchars($ont['last_d_cause']) . "\n";
+            $text .= '┃ 📝 <b>Description:</b> ' . htmlspecialchars($ont['ont_description']) . "\n";
+            $text .= "┗━━━━━━━━━━━━━━━━━━━━━\n";
+        }
+        $options = [
+            'parse_mode' => 'HTML',
+        ];
+        Bot::sendMessage($text, $options);
+
+    } catch (Exception $e) {
+        $text = '❌ Error: ' . $e->getMessage();
+        Bot::sendMessage($text);
+    }
+});
+
 // User commands khusus Administator
 $mkbot->cmd('?hs|/user|/User|!User|?user|!user|', function ($name) {
     $info = bot::message();
