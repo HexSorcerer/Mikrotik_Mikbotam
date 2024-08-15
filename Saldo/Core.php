@@ -18,7 +18,7 @@ require_once '../config/system.conn.php';
 $mkbot = new FrameBot($token, $usernamebot);
 require_once '../config/system.byte.php';
 require_once '../Api/routeros_api.class.php';
-
+include '../Api/olt.php';
 // Any commands akan di cegah dengan ini jika  perlu silahakan dihapus /* dan  */
 
 /*
@@ -772,9 +772,8 @@ $mkbot->cmd('/ppp', function () {
     }
 });
 // ONT monitor commands khusus Administrator
-$mkbot->cmd('/ont', function () {
+$mkbot->cmd('/ont', function ($ont_name) {
     include '../config/system.conn.php';
-    include '../Api/olt.php';
 
     $info = bot::message();
     $idtelegram = $info['from']['id'];
@@ -785,7 +784,7 @@ $mkbot->cmd('/ont', function () {
         return Bot::sendMessage('🚫 Maaf! Akses hanya untuk Administrator');
     }
     try {
-        // Ambil data akses
+        // Kirim list ont
         $json_data = getInfoOnt();
         $akses = json_decode($json_data, true); // Konversi JSON ke array asosiatif
         
@@ -796,9 +795,8 @@ $mkbot->cmd('/ont', function () {
             return Bot::sendMessage('🚫 Maaf! Sepertinya akses API bermasalah!');
         }
         // Kirim daftar ont
-        $text = "📋 <b>Monitoring ONT</b>\n";
-        $text .= "┏━━━━━━━━━━━━━━━━━━━━━\n";
         foreach ($akses['data']['data'] as $ont) {
+            $text  = "┏━━━━━━━━━━━━━━━━━━━━━\n";
             $text .= "┃ 🏷️ <b>ONT Name:</b> " . htmlspecialchars($ont['ont_name']) . "\n";
             $text .= "┃ 🔢 <b>Serial Number:</b> " . htmlspecialchars($ont['ont_sn']) . "\n";
             $text .= "┃ 🔧 <b>Dev Type:</b> " . htmlspecialchars($ont['dev_type']) . "\n";
@@ -808,12 +806,16 @@ $mkbot->cmd('/ont', function () {
             $text .= '┃ 🛑 <b>Last Downtime Cause:</b> ' . htmlspecialchars($ont['last_d_cause']) . "\n";
             $text .= '┃ 📝 <b>Description:</b> ' . htmlspecialchars($ont['ont_description']) . "\n";
             $text .= "┗━━━━━━━━━━━━━━━━━━━━━\n";
+            $options = [
+                'parse_mode' => 'html',
+                'reply_markup' => json_encode([
+                    'inline_keyboard' => [
+                        [['text' => '🔖 Rincian ONT', 'callback_data' => 'ont|'.$ont['ont_name']],],
+                    ],
+                ]),
+            ];
+            Bot::sendMessage($text, $options);
         }
-        $options = [
-            'parse_mode' => 'HTML',
-        ];
-        Bot::sendMessage($text, $options);
-
     } catch (Exception $e) {
         $text = '❌ Error: ' . $e->getMessage();
         Bot::sendMessage($text);
@@ -1751,6 +1753,71 @@ $mkbot->on('callback', function ($command) {
                 }
             }
             Bot::answerCallbackQuery($text, $options = ['show_alert' => true]);
+        } elseif (strpos($command, 'ont') !== false) {
+            if (preg_match('/^ont/', $command)) {
+                // ambil data
+                $cekdata = explode('|', $command);
+                $ont_name = $cekdata[1];
+                $json_data = getDetailOnt($ont_name);
+                $akses = json_decode($json_data, true); // Konversi JSON ke array asosiatif
+                if (!$akses['success']) {
+                    $options = [
+                        'chat_id' => $chatidtele,
+                        'message_id' => (int) $message['message']['message_id'],
+                        'text' => '🚫 ' . $akses['pesan'],
+                        'reply_markup' => json_encode([
+                            'inline_keyboard' => [[['text' => '🔙 Back', 'callback_data' => 'Menu']]],
+                        ]),
+                        'parse_mode' => 'html',
+                    ];
+
+                    Bot::editMessageText($options);
+                }
+                // Kirim rincian ont
+                $ont = $akses['data'];
+                $text  = "┏━━━━━━━━━━━━━━━━━━━━━\n";
+                $text .= "┃ 🏷️ <b>ONT Name:</b> " . htmlspecialchars($ont['overview']['ont_name']) . "\n";
+                $text .= "┃ 🔢 <b>Serial Number:</b> " . htmlspecialchars($ont['overview']['ont_sn']) . "\n";
+                $text .= "┃ 🔑 <b>ONT Password:</b> " . htmlspecialchars($ont['overview']['ont_passwd']) . "\n";
+                $text .= "┃ 🆔 <b>Login ID:</b> " . htmlspecialchars($ont['overview']['loid']) . "\n";
+                $text .= "┃ 🔐 <b>Login Pass:</b> " . htmlspecialchars($ont['overview']['loid_password']) . "\n";
+                $text .= "┃ ⏳ <b>Last Uptime:</b> " . formatDTM($ont['overview']['last_u_time']) . "\n";
+                $text .= "┃ ⏱️ <b>Last Downtime:</b> " . formatDTM($ont['overview']['last_d_time']) . "\n";
+                $text .= "┃ ⚠️ <b>Last Downtime Cause:</b> " . htmlspecialchars($ont['overview']['last_d_cause']) . "\n";
+                $text .= "┃ 🕒 <b>Uptime:</b> " . htmlspecialchars($ont['overview']['uptime']) . "\n";
+                $text .= "┃ 📝 <b>Description:</b> " . htmlspecialchars($ont['overview']['ont_description']) . "\n";
+                $text .= "┃━━━━━━━━━━━━━━━━━━━━━\n";
+                $text .= "┃ 🌡️ <b>Work Temperature:</b> " . htmlspecialchars($ont['optical']['work_temperature']) . "\n";
+                $text .= "┃ ⚡ <b>Work Voltage:</b> " . htmlspecialchars($ont['optical']['work_voltage']) . "\n";
+                $text .= "┃ 📈 <b>Transmit Bias:</b> " . htmlspecialchars($ont['optical']['transmit_bias']) . "\n";
+                $text .= "┃ 📉 <b>Transmit Power:</b> " . htmlspecialchars($ont['optical']['transmit_power']) . "\n";
+                $text .= "┃ 📊 <b>Receive Power:</b> " . htmlspecialchars($ont['optical']['receive_power']) . "\n";
+                $text .= "┃ 📏 <b>OLT Rxpower:</b> " . htmlspecialchars($ont['optical']['olt_rxpower']) . "\n";
+                $text .= "┃━━━━━━━━━━━━━━━━━━━━━\n";
+                $text .= "┃ 🔢 <b>Identifier:</b> " . htmlspecialchars($ont['version']['identifier']) . "\n";
+                $text .= "┃ 🏭 <b>Vendor ID:</b> " . htmlspecialchars($ont['version']['vendorid']) . "\n";
+                $text .= "┃ 🔧 <b>ONT Version:</b> " . htmlspecialchars($ont['version']['ont_version']) . "\n";
+                $text .= "┃ 🛠️ <b>Equipment ID:</b> " . htmlspecialchars($ont['version']['equipmentid']) . "\n";
+                $text .= "┃ 🔬 <b>OMCC VER:</b> " . htmlspecialchars($ont['version']['omcc_version']) . "\n";
+                $text .= "┃ ⚙️ <b>Main VER:</b> " . htmlspecialchars($ont['version']['mainversion']) . "\n";
+                $text .= "┃ 🏆 <b>Stable VER:</b> " . htmlspecialchars($ont['version']['stbversion']) . "\n";
+                $text .= "┗━━━━━━━━━━━━━━━━━━━━━\n";
+                $options = [
+                    'parse_mode' => 'html',
+                ];
+                // Bot::sendMessage($text, $options);
+                $options = [
+                    'chat_id' => $chatidtele,
+                    'message_id' => (int) $message['message']['message_id'],
+                    'text' => $text,
+                    'reply_markup' => json_encode([
+                        'inline_keyboard' => [],
+                    ]),
+                    'parse_mode' => 'html',
+                ];
+
+                Bot::editMessageText($options);
+            }
         }
     } else {
         $text = "🚫 Anda belum terdaftar\n\n";
