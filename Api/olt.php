@@ -18,14 +18,14 @@ function fetchFromApi($url) {
 }
 
 function getInfoOnt() {
-    $url = 'https://vivi.gifofficial.my.id/api/vivi-vivinet-olt?req=getONT';
+    $url = 'https://vivi.gifguild.my.id/api/vivi-vivinet-olt?req=getONT';
     return fetchFromApi($url);
 }
 
 function getDetailOnt($ont) {
     // $parts = explode("olt|", $name);
     // $ont = isset($parts[1]) ? $parts[1] : null;
-    $url = 'https://vivi.gifofficial.my.id/api/vivi-vivinet-olt?req=getONT&ont='.$ont;
+    $url = 'https://vivi.gifguild.my.id/api/vivi-vivinet-olt?req=getONT&ont='.$ont;
     return fetchFromApi($url);
 }
 
